@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="layout">
     <h1 class="out-title"><span class="home" @click="goHome">whaleAnno</span></h1>
-    <div class="layout">
+    <div class="container">
       <div v-if="page==='list'" class="project-box">
         <div class="project-box-titile">
           <h3 class="inner-title">我的项目</h3>
@@ -143,15 +143,18 @@ export default {
   vertical-align: middle;
 }
 .home {
+  font-size: 28px;
   cursor: pointer;
-}
-.home:hover {
-  opacity: 0.6;
 }
 .layout {
   display: flex;
+  flex-direction: column;
+}
+.container {
+  display: flex;
+  flex: 1 1;
   flex-direction: row;
-  height: calc(100% - 92px);
+  /* height: calc(100% - 92px); */
 }
 .button {
   color: #fff;

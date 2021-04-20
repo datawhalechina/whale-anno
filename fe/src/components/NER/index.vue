@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="layout">
     <span class="home" @click="goHome">whaleAnno</span>
     <h1 class="out-title">{{projectName}}（{{projectType}}）</h1>
-    <div class="layout" @dragover="stopPrev" @drop="setFiles($event)">
+    <div class="container" @dragover="stopPrev" @drop="setFiles($event)">
       <div class="left">
         <div class="file-list">
           <div v-for="file in files" :key="file" @click="setNowText(file)"
@@ -11,11 +11,16 @@
             {{ file }}
           </div>
         </div>
+        <div class="page-ctl">
+          <span class="page-ctl-last" :style="{opacity: pageNumber === 1 ? 0 : 1}" @click="lastPage">上页</span>
+          <span class="page-number">{{pageNumber}}</span>
+          <span class="page-ctl-next" :style="{opacity: files.length < pageSize ? 0 : 1}" @click="nextPage">下页</span>
+        </div>
         <div class="out-btn" @click="outAllNers">导出json结果</div>
       </div>
       <div class="right">
         <div class="title">
-          <span>{{ nowFile }}</span>
+          <span>选择标签：</span>
           <div class="type-box">
             <span v-for="type in typeList" :key="type" @click="setType(type)" @contextmenu="delType(type, $event)" :class="nowType===type?'type selected':'type'"
               :style="{
@@ -24,10 +29,15 @@
               @mouseover="setFocus(type)"
               @mouseleave="setFocus('')"
             >
-              <input class="color-input" :value="types[type].color" type="color" @change="changeColor(type, $event)" @click.stop/>
+              <svg t="1618942541356" @click.stop="clickColor(type, $event)" class="color-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1686" width="18" height="18"><path d="M204.4 524.9c-14.5 1.5-26.2 13.2-27.7 27.7-2.1 19.9 14.6 36.7 34.6 34.6 14.5-1.5 26.2-13.2 27.8-27.8 2-19.9-14.8-36.6-34.7-34.5zM265.4 473.7c21.8-1.9 39.4-19.5 41.4-41.4 2.5-28.5-21.2-52.3-49.7-49.7-21.8 1.9-39.4 19.5-41.4 41.4-2.6 28.4 21.2 52.2 49.7 49.7zM415.8 266.9c-28.5 1.8-51.6 24.9-53.4 53.4-2.2 34.5 26.4 63.1 60.9 60.9 28.5-1.8 51.6-24.9 53.4-53.4 2.1-34.6-26.4-63.1-60.9-60.9zM621.9 253.8c-35.1 2.2-63.4 30.6-65.6 65.6-2.7 42.4 32.4 77.6 74.8 74.8 35.1-2.2 63.4-30.6 65.6-65.6 2.8-42.4-32.3-77.5-74.8-74.8zM966.5 276.4c-0.5-7.6-4-14.6-9.8-19.6l-0.7-0.6c-5.2-4.5-11.9-7-18.8-7-8.3 0-16.2 3.6-21.6 9.9L574 652.4l-43.5 85.5 1.1 0.9-4.9 11.3 11.1-5.9 1.5 1.3 78-54.3 342.3-394c5-5.8 7.4-13.2 6.9-20.8z" p-id="1687" fill="#2c3e50"></path><path d="M897.8 476.3c-13.8-1.4-26.7 7.4-30.4 20.7-6.9 24.6-19.3 64.5-35.1 97.8C809.5 643 767.4 710.1 696.7 756c-72.2 46.9-142.7 56.7-189.2 56.7-37 0-72.2-6.1-101.7-17.7-26.9-10.5-46.4-24.6-54.9-39.7-3.4-6.1-7.2-12.9-11.2-20.2-17.2-31.1-36.6-66.5-49.7-77.4-15.9-13.2-39.1-15-59.8-15-8.1 0-40.8 1.3-48.5 1.3-33.1 0-49.4-6.5-56.1-22.4-17.8-42.3-7.3-114.3 26.8-183.4C205.2 331.4 300 253.3 412.6 224c40-10.6 81.2-18.9 121.3-18.9 85.6 0 187.8 32.8 252.5 77.2 11.4 7.8 26.9 5.8 35.7-4.9 10.4-12.6 7.1-31.4-6.8-39.8-23.3-14-57.9-34-86.3-47.1-60.3-27.9-123.7-41.9-189.2-41.9-68.1 0-148.8 16.4-217.2 47.2-78.1 35-135.2 85-179.4 147.5-36.4 51.4-67.8 111.1-80.1 168.7-7.5 35.1-6.8 57.4-2.4 87.8 4.2 29.2 13.4 52.5 26.9 67.5 22.4 25.1 51.5 37.4 89 37.4 13.9 0 56.3-5 63.1-5 7.4 0 12.2 1.2 14.4 3.8 6.4 7.4 14.4 22.4 23.7 39.9 7.5 14.1 15.9 30.1 25.4 45.3 12.1 19.5 36.9 40.4 66.5 55.9 27 14.1 71.9 31 132.2 31 72 0 148.3-23.6 226.7-70.1 74.9-44.4 123-118.9 150.2-173.6 19-38.3 34.7-87.2 43.8-119.1 4.8-17.3-7-34.7-24.8-36.5z" p-id="1688" fill="#2c3e50"></path></svg>
+              <input :id="type" class="color-input" :value="types[type].color" type="color" @change="changeColor(type, $event)" @click.stop/>
               {{ type }} {{ fastTypeKey[type] ? `【${fastTypeKey[type]}】` : '' }}
+              <svg t="1618943942999" class="close-icon" @click="checkDelType(type, $event)" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3793" width="18" height="18"><path d="M512 421.504l274.752-274.752 90.496 90.496L602.496 512l274.752 274.752-90.496 90.496L512 602.496l-274.752 274.752-90.496-90.496L421.504 512 146.752 237.248l90.496-90.496z" p-id="3794" fill="#ff0000"></path></svg>
             </span>
-            <input class="type-input" placeholder="新增标签" @blur="addType" @keypress="typeInput"/>
+            <span class="type-input-box">
+              <input class="type-input" id="type-input" placeholder="新增标签" @keypress="typeInput" @change="typeInput"/>
+              <button class="page-btn" @click="addType">提交</button>
+            </span>
           </div>
         </div>
         <div id="ner-box" class="ner-box" @mouseup="setMode('')" @mouseleave="setMode('');setFocus('')" @keydown="setTypeByFastKey" @mouseover="setFocus('ner-box')">
@@ -69,8 +79,8 @@
           </span>
         </div>
         <div class="page-btn-box">
-          <button class="page-btn" @click="changePage(-1)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一页 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
-          <button class="page-btn" @click="changePage(+1)" @mouseover="setFocus('page-down')" @mouseleave="setFocus('')">下一页 {{ fastTypeKey['page-down'] ? `【${fastTypeKey['page-down']}】` : '' }}</button>
+          <button class="page-btn" @click="changeIdx(-1)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
+          <button class="page-btn" @click="changeIdx(+1)" @mouseover="setFocus('page-down')" @mouseleave="setFocus('')">下一个 {{ fastTypeKey['page-down'] ? `【${fastTypeKey['page-down']}】` : '' }}</button>
           <button class="page-btn"
             :disabled="!nersCache[nowFile] || JSON.stringify(nersCache[nowFile]) === JSON.stringify(ners)"
             @click="save" @mouseover="setFocus('save')" @mouseleave="setFocus('')"
@@ -144,6 +154,9 @@ export default {
   name: 'NER',
   data () {
     return {
+      pageNumber: 1,
+      pageSize: 20,
+      inputType: '',
       projectName: '', // 项目名称
       projectType: '', // 项目类型
       columnWordCount: 10, // 每列的字数，会自动计算
@@ -193,6 +206,24 @@ export default {
     }
   },
   methods: {
+    lastPage () {
+      const that = this
+      if (that.pageNumber > 1) {
+        that.pageNumber = that.pageNumber - 1
+        get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
+          that.$set(that, 'files', info)
+        })
+      }
+    },
+    nextPage () {
+      const that = this
+      if (that.files.length === that.pageSize) {
+        that.pageNumber = that.pageNumber + 1
+        get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
+          that.$set(that, 'files', info)
+        })
+      }
+    },
     goHome: function () {
       this.$router.push({path: '/'})
     },
@@ -230,7 +261,7 @@ export default {
         that.nowText = that.textDic[newFile]
       })
     },
-    changePage: function (d) {
+    changeIdx: function (d) {
       const nowIdx = this.files.indexOf(this.nowFile)
       let newIdx = nowIdx + d
       if (newIdx < 0) newIdx = 0
@@ -261,7 +292,7 @@ export default {
     },
     delType: function (type, ev) {
       const that = this
-      ev.preventDefault() // 取消默认的右键菜单事件
+      ev && ev.preventDefault() // 取消默认的右键菜单事件
       // 右键删除对应的类型
       const newTypes = {}
       const newTypeList = []
@@ -278,14 +309,22 @@ export default {
       that.flushWordsType()
       updateType2Server(that.projectName, that.typeList, that.types)
     },
+    checkDelType: function (type, ev) {
+      ev && ev.stopPropagation()
+      const isDel = window.confirm(`确定删除标签【${type}】么？`)
+      if (isDel) {
+        this.delType(type)
+      }
+    },
     /**
      * 增加类型
      * @param 类型
      */
-    addType: function (ev) {
+    addType: function () {
       const that = this
-      const newType = ev.target.value
-      ev.target.value = ''
+      const newType = that.inputType
+      document.getElementById('type-input').value = ''
+      that.inputType = ''
       if (!newType) return false
       if (that.types[newType]) return false
       that.$set(that.types, newType, {
@@ -295,6 +334,7 @@ export default {
       updateType2Server(that.projectName, that.typeList, that.types)
     },
     typeInput: function (ev) {
+      this.inputType = ev.target.value
       if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
         this.addType(ev)
       }
@@ -445,6 +485,9 @@ export default {
     setFocus (tar) {
       this.nowFocus = tar
     },
+    clickColor (type) {
+      document.getElementById(type).click()
+    },
     // 切换颜色
     changeColor (tarType, ev) {
       const that = this
@@ -487,7 +530,7 @@ export default {
         return entityType.type
       })
       that.types = types
-      get(`/v1/files/query?projectName=${projectName}&pageNumber=1&pageSize=99999999`, function (info) {
+      get(`/v1/files/query?projectName=${projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
         that.$set(that, 'files', info)
       })
     }
@@ -509,11 +552,11 @@ export default {
           const type = that.fastKeyType[key]
           if (type) {
             if (type === 'page-up') {
-              // 快捷上一页
-              that.changePage(-1)
+              // 快捷上一个
+              that.changeIdx(-1)
             } else if (type === 'page-down') {
-              // 快捷下一页
-              that.changePage(+1)
+              // 快捷下一个
+              that.changeIdx(+1)
             } else if (type === 'save') {
               // 保存
               that.save()
@@ -551,12 +594,14 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 5px 10px;
+  height: 92px;
+  padding: 0 10px;
+  line-height: 92px;
+  font-size: 28px;
   color: #fff;
   cursor: pointer;
-}
-.home:hover {
-  opacity: .6;
+  font-weight: 700;
+  vertical-align: center;
 }
 .out-title {
   display: inline-block;
@@ -566,12 +611,17 @@ export default {
   width: 100%;
   height: 92px;
   line-height: 92px;
-  border-bottom: 2px solid #ccc;
+  font-size: 28px;
   box-sizing: border-box;
   vertical-align: middle;
 }
 .layout {
   display: flex;
+  flex-direction: column;
+}
+.container {
+  display: flex;
+  flex: 1 1;
   flex-direction: row;
   height: calc(100% - 92px);
 }
@@ -598,9 +648,10 @@ export default {
 }
 .left .file-list {
   overflow: auto;
-  height: calc(100% - 41px);
+  height: calc(100% - 82px);
 }
-.left .out-btn {
+.left .out-btn,
+.left .page-ctl {
   position: absolute;
   display: inline-block;
   bottom: 0;
@@ -612,7 +663,17 @@ export default {
   margin: auto;
   cursor: pointer;
   background: #054ba8;
+  user-select: none;
 }
+.left .page-ctl {
+  bottom: 41px;
+  cursor: default;
+}
+.left .page-ctl .page-number {
+  min-width: 2em;
+}
+.left .page-ctl-last:hover,
+.left .page-ctl-next:hover,
 .left .out-btn:hover {
   opacity: .6;
 }
@@ -643,6 +704,9 @@ export default {
   vertical-align: middle;
   outline:none;
 }
+.type-input-box {
+  display: inline-block;
+}
 .page-btn {
   cursor: pointer;
   opacity: 1;
@@ -656,6 +720,7 @@ export default {
   background: white;
 }
 .type {
+  position: relative;
   box-sizing: content-box;
   /* box-shadow: 2px 2px 0px #ccc; */
   border: 1px solid #ccc;
@@ -746,13 +811,19 @@ export default {
 }
 
 .color-input {
-  margin: 0;
-  outline: none;
-  border: 0px;
-  padding: 0;
-  width: 18px;
-  height: 22px;
-  line-height: 32px;
-  background-color: #0000;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.color-icon {
+  float: right;
+  display: inline-block;
+  margin-top: 6px;
+}
+.close-icon {
+  position: absolute;
+  top: -9px;
+  right: -9px;
 }
 </style>
