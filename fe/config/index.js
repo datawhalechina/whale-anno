@@ -54,7 +54,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/dw-tool-ner/v1.2.3/',
+    assetsPublicPath: '/dw-tool-ner/v1.2.4/',
 
     /**
      * Source Maps
