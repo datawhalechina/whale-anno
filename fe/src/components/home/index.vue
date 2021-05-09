@@ -69,18 +69,6 @@ function getColor () {
 function get (url, cb) {
   query('GET', url, '', cb)
 }
-function updateType2Server (projectName, typeList, types) {
-  const entityTypes = typeList.map((type) => {
-    return {
-      type,
-      color: types[type].color
-    }
-  })
-  post('/v1/project/update_entity_types', {
-    projectName: projectName,
-    entityTypes: JSON.stringify(entityTypes)
-  })
-}
 function post (url, data, cb) {
   query('POST', url, data, cb)
 }
@@ -191,7 +179,6 @@ export default {
       })
       that.typeList.push(newType)
       console.log(that.typeList)
-      updateType2Server(that.projectName, that.typeList, that.types)
     },
     delType: function (type, ev) {
       const that = this
@@ -209,7 +196,6 @@ export default {
       }
       that.typeList = newTypeList
       that.types = newTypes
-      updateType2Server(that.projectName, that.typeList, that.types)
     },
     checkDelType: function (type, ev) {
       ev && ev.stopPropagation()
@@ -232,7 +218,6 @@ export default {
       const that = this
       console.log(tarType, ev.target.value)
       that.$set(that.types[tarType], 'color', ev.target.value)
-      updateType2Server(that.projectName, that.typeList, that.types)
     }
   },
   mounted () {

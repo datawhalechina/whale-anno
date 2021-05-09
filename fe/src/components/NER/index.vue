@@ -6,10 +6,12 @@
       <div class="left">
         <div class="file-list">
           <div v-for="file in files" :key="file" @click="setNowText(file)"
-            :class="['file', nowFile===file?'selected':'', nersCache[file]&&nersCache[file].length?'checked':'', ].join(' ')"
+            :class="['file', nowFile===file?'selected':'', isAnnoDic[`${projectName}_${file}`]||(nersCache[file]&&nersCache[file].length)?'checked':'', ].join(' ')"
           >
             {{ file }}
+            <svg v-if="isAnnoDic[`${projectName}_${file}`]||(nersCache[file]&&nersCache[file].length)" t="1619449859327" class="checked-icon" viewBox="0 0 1152 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1159" width="16" height="16"><path d="M4.266667 576l238.933333-187.733333 204.8 192c0 0 379.733333-328.533333 699.733333-512l0 123.733333C704 580.266667 426.666667 989.866667 426.666667 989.866667L4.266667 576 4.266667 576zM4.266667 576" p-id="1160" fill="#35e558"></path></svg>
           </div>
+          <div class="process-bar" :style="{width: `${processRate*100}%`}"></div>
         </div>
         <div class="page-ctl">
           <span class="page-ctl-last" :style="{opacity: pageNumber === 1 ? 0 : 1}" @click="lastPage">上页</span>
@@ -30,7 +32,7 @@
               @mouseleave="setFocus('')"
             >
               <svg v-if="configCanCtlType" t="1618942541356" @click.stop="clickColor(type, $event)" class="color-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1686" width="18" height="18"><path d="M204.4 524.9c-14.5 1.5-26.2 13.2-27.7 27.7-2.1 19.9 14.6 36.7 34.6 34.6 14.5-1.5 26.2-13.2 27.8-27.8 2-19.9-14.8-36.6-34.7-34.5zM265.4 473.7c21.8-1.9 39.4-19.5 41.4-41.4 2.5-28.5-21.2-52.3-49.7-49.7-21.8 1.9-39.4 19.5-41.4 41.4-2.6 28.4 21.2 52.2 49.7 49.7zM415.8 266.9c-28.5 1.8-51.6 24.9-53.4 53.4-2.2 34.5 26.4 63.1 60.9 60.9 28.5-1.8 51.6-24.9 53.4-53.4 2.1-34.6-26.4-63.1-60.9-60.9zM621.9 253.8c-35.1 2.2-63.4 30.6-65.6 65.6-2.7 42.4 32.4 77.6 74.8 74.8 35.1-2.2 63.4-30.6 65.6-65.6 2.8-42.4-32.3-77.5-74.8-74.8zM966.5 276.4c-0.5-7.6-4-14.6-9.8-19.6l-0.7-0.6c-5.2-4.5-11.9-7-18.8-7-8.3 0-16.2 3.6-21.6 9.9L574 652.4l-43.5 85.5 1.1 0.9-4.9 11.3 11.1-5.9 1.5 1.3 78-54.3 342.3-394c5-5.8 7.4-13.2 6.9-20.8z" p-id="1687" fill="#2c3e50"></path><path d="M897.8 476.3c-13.8-1.4-26.7 7.4-30.4 20.7-6.9 24.6-19.3 64.5-35.1 97.8C809.5 643 767.4 710.1 696.7 756c-72.2 46.9-142.7 56.7-189.2 56.7-37 0-72.2-6.1-101.7-17.7-26.9-10.5-46.4-24.6-54.9-39.7-3.4-6.1-7.2-12.9-11.2-20.2-17.2-31.1-36.6-66.5-49.7-77.4-15.9-13.2-39.1-15-59.8-15-8.1 0-40.8 1.3-48.5 1.3-33.1 0-49.4-6.5-56.1-22.4-17.8-42.3-7.3-114.3 26.8-183.4C205.2 331.4 300 253.3 412.6 224c40-10.6 81.2-18.9 121.3-18.9 85.6 0 187.8 32.8 252.5 77.2 11.4 7.8 26.9 5.8 35.7-4.9 10.4-12.6 7.1-31.4-6.8-39.8-23.3-14-57.9-34-86.3-47.1-60.3-27.9-123.7-41.9-189.2-41.9-68.1 0-148.8 16.4-217.2 47.2-78.1 35-135.2 85-179.4 147.5-36.4 51.4-67.8 111.1-80.1 168.7-7.5 35.1-6.8 57.4-2.4 87.8 4.2 29.2 13.4 52.5 26.9 67.5 22.4 25.1 51.5 37.4 89 37.4 13.9 0 56.3-5 63.1-5 7.4 0 12.2 1.2 14.4 3.8 6.4 7.4 14.4 22.4 23.7 39.9 7.5 14.1 15.9 30.1 25.4 45.3 12.1 19.5 36.9 40.4 66.5 55.9 27 14.1 71.9 31 132.2 31 72 0 148.3-23.6 226.7-70.1 74.9-44.4 123-118.9 150.2-173.6 19-38.3 34.7-87.2 43.8-119.1 4.8-17.3-7-34.7-24.8-36.5z" p-id="1688" fill="#2c3e50"></path></svg>
-              <input :id="type" class="color-input" :value="types[type].color" type="color" @change="changeColor(type, $event)" @click.stop/>
+              <input v-if="configCanCtlType" :id="type" class="color-input" :value="types[type].color" type="color" @change="changeColor(type, $event)" @click.stop/>
               {{ type }} {{ fastTypeKey[type] ? `【${fastTypeKey[type]}】` : '' }}
               <svg v-if="configCanCtlType" t="1618943942999" class="close-icon" @click="checkDelType(type, $event)" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3793" width="18" height="18"><path d="M512 421.504l274.752-274.752 90.496 90.496L602.496 512l274.752 274.752-90.496 90.496L512 602.496l-274.752 274.752-90.496-90.496L421.504 512 146.752 237.248l90.496-90.496z" p-id="3794" fill="#ff0000"></path></svg>
             </span>
@@ -90,7 +92,7 @@
             backgroundColor: types[ner.type] ? types[ner.type].color : `#fff`,
           }"
         >
-          <span class="result-type">{{ ner.type }}</span>
+          <span class="result-type">{{ ner.type.substr(0,2) }}</span>
           <span class="result-name">{{ ner.name }}</span>
         </div>
       </div>
@@ -130,9 +132,6 @@ function query (method, url, data = '', cb) {
   }
   xhr.send(JSON.stringify(data))
 }
-get('/v1/index', function (data) {
-  console.log('data', data)
-})
 function updateType2Server (projectName, typeList, types) {
   const entityTypes = typeList.map((type) => {
     return {
@@ -167,11 +166,12 @@ export default {
       nowText: '', // 当前的文件文本
       ners: [], // 当前文件已标注的实体
       nowNer: {}, // 当前鼠标正在标注的实体
-      nowType: 'person', // 当前选择的实体类型
+      nowType: '', // 当前选择的实体类型
       typeList: ['person', 'location', 'organiztion'], // 实体类型可选列表
+      isAnnoDic: {}, // 服务器是否返回已标注过
       nowFocus: '', // 鼠标当前位置的对象，比如标注框/类型按钮/翻页按钮
-      fastKeyType: {}, // 快捷键对应的类型
-      fastTypeKey: {}, // 类型对应的快捷键
+      fastKeyType: localStorage.fastKeyType ? JSON.parse(localStorage.fastKeyType) : {}, // 快捷键对应的类型
+      fastTypeKey: localStorage.fastTypeKey ? JSON.parse(localStorage.fastTypeKey) : {}, // 类型对应的快捷键
       types: { // 类型对应的属性
         'person': {
           color: '#e61490'
@@ -200,6 +200,21 @@ export default {
         return [...this.ners, this.nowNer]
       }
       return this.ners
+    },
+    processRate: function () {
+      const files = this.files || []
+      if (!files.length) return 0
+      const nersCache = this.nersCache || {}
+      const projectName = this.projectName || ''
+      const isAnnoDic = this.isAnnoDic || {}
+      let cnt = 0
+      for (let i = 0; i < files.length; i += 1) {
+        const file = files[i]
+        if (isAnnoDic[`${projectName}_${file}`] || (nersCache[file] && nersCache[file].length)) {
+          cnt += 1
+        }
+      }
+      return cnt / files.length
     }
   },
   methods: {
@@ -208,7 +223,11 @@ export default {
       if (that.pageNumber > 1) {
         that.pageNumber = that.pageNumber - 1
         get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-          that.$set(that, 'files', info)
+          that.$set(that, 'files', info.map((item) => {
+            if (typeof item === 'string') return item
+            that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
+            return item.fileName
+          }))
         })
       }
     },
@@ -217,7 +236,11 @@ export default {
       if (that.files.length === that.pageSize) {
         that.pageNumber = that.pageNumber + 1
         get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-          that.$set(that, 'files', info)
+          that.$set(that, 'files', info.map((item) => {
+            if (typeof item === 'string') return item
+            that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
+            return item.fileName
+          }))
         })
       }
     },
@@ -225,6 +248,14 @@ export default {
       this.$router.push({path: '/'})
     },
     save: function () {
+      if (window.isLoadingNowText) {
+        if (Date.now() - window.isLoadingNowText < 30 * 1000) {
+          alert('请等待文件内容加载')
+          return false
+        } else {
+          delete window.isLoadingNowText
+        }
+      }
       const that = this
       // 保存当前标注
       post('/v1/anno/create', {
@@ -233,6 +264,7 @@ export default {
         annoDetails: JSON.stringify(that.ners)
       })
       that.$set(that.nersCache, that.nowFile, [...that.ners])
+      return true
     },
     /**
      * 选中目标文件
@@ -240,13 +272,16 @@ export default {
      */
     setNowText: function (newFile) {
       const that = this
-      that.save()
+      const isSaved = that.save()
+      if (!isSaved) return false
+      window.isLoadingNowText = Date.now()
       that.nowFile = newFile
       that.nowText = that.textDic[newFile]
       const hasCache = !!that.nersCache[newFile]
       that.$set(that, 'ners', that.nersCache[newFile] ? [...that.nersCache[newFile]] : [])
       that.flushWordsType()
       get(`/v1/anno/query?projectName=${that.projectName}&fileName=${newFile}`, function (info) {
+        delete window.isLoadingNowText
         // 如果本地没有缓存，就用线上的标注记录
         if (!hasCache && info.annoDetails) {
           that.$set(that, 'ners', JSON.parse(info.annoDetails))
@@ -271,6 +306,10 @@ export default {
      */
     pointWord: function (idx, config = {}) {
       if (this.mode === 'select') {
+        if (!this.nowType) {
+          alert('请先选择标签')
+          return false
+        }
         this.endIdx = idx
         const type = this.nowType
         const start = Math.min(this.startIdx, this.endIdx)
@@ -408,6 +447,9 @@ export default {
       return false
     },
     endSelect: function () {
+      if (!this.nowType) {
+        return false
+      }
       const isRepeat = this.checkIsRepeat(this.nowNer)
       if (!isRepeat && this.nowNer.isMove) {
         delete this.nowNer.isMove
@@ -516,7 +558,6 @@ export default {
   },
   mounted () {
     const that = this
-    console.log(that.$route)
     const { projectName, projectType, entityTypes } = that.$route.query
     if (projectName) {
       that.projectName = projectName
@@ -531,8 +572,14 @@ export default {
         return entityType.type
       })
       that.types = types
+      // 进入时默认选择第一个标签，防止弹出请选择标签的提示
+      if (that.typeList && that.typeList[0]) that.nowType = that.typeList[0]
       get(`/v1/files/query?projectName=${projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-        that.$set(that, 'files', info)
+        that.$set(that, 'files', info.map((item) => {
+          if (typeof item === 'string') return item
+          that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
+          return item.fileName
+        }))
       })
     }
     function calcColumnWordCount () {
@@ -570,8 +617,8 @@ export default {
           if (oldKey) {
             that.$set(that.fastKeyType, oldKey, undefined)
           }
-          // 保存新的快捷键
-          that.$set(that.fastKeyType, key, that.nowFocus)
+          // 保存新的快捷键，按Eacape可以起到删除快捷键的作用
+          if (key !== 'Escape') that.$set(that.fastKeyType, key, that.nowFocus)
           // 计算新的 类型->键 关系
           const typeKey = {}
           for (const key in that.fastKeyType) {
@@ -579,6 +626,8 @@ export default {
             typeKey[type] = key
           }
           that.$set(that, 'fastTypeKey', typeKey)
+          localStorage.fastKeyType = JSON.stringify(that.fastKeyType)
+          localStorage.fastTypeKey = JSON.stringify(that.fastTypeKey)
         }
       }
     }
@@ -638,7 +687,14 @@ export default {
   cursor: pointer;
 }
 .left .file.checked {
+  position: relative;
   color: #ccc;
+}
+.left .file .checked-icon {
+  position: absolute;
+  right: 2px;
+  top: 0;
+  bottom: 0;
 }
 .left .file.selected {
   background: #033271;
@@ -647,6 +703,12 @@ export default {
 .left .file-list {
   overflow: auto;
   height: calc(100% - 82px);
+}
+.left .file-list .process-bar {
+  position: absolute;
+  top: 0;
+  border-top: 2px solid #35e558;
+  transition: 0.3s width linear;
 }
 .left .out-btn,
 .left .page-ctl {
@@ -720,9 +782,9 @@ export default {
 .type {
   position: relative;
   box-sizing: content-box;
-  /* box-shadow: 2px 2px 0px #ccc; */
   border: 1px solid #ccc;
   border-bottom: 3px solid #ccc;
+  text-align: center;
 }
 .type.selected,
 .result.selected {
@@ -780,6 +842,15 @@ export default {
   padding: 0 4px;
   height: 22px;
   text-align: left;
+}
+.result-type {
+  text-align: center;
+}
+.result-name {
+  overflow: hidden;
+  height: 100%;
+  text-overflow: ellipsis;
+  word-break: keep-all;
 }
 .result-type,
 .result-name {
