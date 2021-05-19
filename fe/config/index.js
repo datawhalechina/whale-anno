@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/v1/': {
-        target: 'http://39.102.94.103:9060/',
+        target: 'http://localhost:9060/',
       }
     },
 
@@ -54,7 +54,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/dw-tool-ner/v1.2.7/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps
