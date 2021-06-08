@@ -272,8 +272,6 @@ export default {
      */
     setNowText: function (newFile) {
       const that = this
-      const isSaved = that.save()
-      if (!isSaved) return false
       window.isLoadingNowText = Date.now()
       that.nowFile = newFile
       that.nowText = that.textDic[newFile]
