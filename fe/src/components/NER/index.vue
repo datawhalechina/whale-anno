@@ -116,7 +116,7 @@ function get (url, cb) {
 function post (url, data, cb) {
   query('POST', url, data, cb)
 }
-function query (method, url, data = '', cb) {
+function query (method, url, data = '', cb, tryTimes = 0) {
   var xhr = new XMLHttpRequest()
   xhr.open(method, url)
   xhr.setRequestHeader('content-type', 'application/json')
@@ -124,7 +124,13 @@ function query (method, url, data = '', cb) {
     if (xhr.readyState === 4 && xhr.status === 200) {
       const result = JSON.parse(xhr.responseText)
       if (result.errCode !== 0) {
-        alert(result.errMsg)
+        if (tryTimes >= 2) {
+          alert(result.errMsg)
+        } else {
+          setTimeout(() => {
+            query(method, url, data = '', cb, tryTimes + 1)
+          }, 200)
+        }
       } else {
         cb && cb(result.info)
       }
@@ -249,7 +255,7 @@ export default {
     },
     save: function () {
       if (window.isLoadingNowText) {
-        if (Date.now() - window.isLoadingNowText < 30 * 1000) {
+        if (Date.now() - window.isLoadingNowText < 10 * 1000) {
           alert('请等待文件内容加载')
           return false
         } else {
