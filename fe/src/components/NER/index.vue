@@ -818,12 +818,12 @@ export default {
 .ner-box .word {
   display: inline-block;
   position: relative;
-  margin-bottom: 15px;
+  padding-bottom: 15px;
   width: 20px;
   height: 20px;
   line-height: 20px;
   vertical-align: bottom;
-  box-sizing: border-box;
+  box-sizing: content-box;
   text-align: center;
   font-size: 16px;
   z-index: 4;
