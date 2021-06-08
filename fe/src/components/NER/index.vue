@@ -284,18 +284,22 @@ export default {
       const hasCache = !!that.nersCache[newFile]
       that.$set(that, 'ners', that.nersCache[newFile] ? [...that.nersCache[newFile]] : [])
       that.flushWordsType()
-      get(`/v1/anno/query?projectName=${that.projectName}&fileName=${newFile}`, function (info) {
+      if (that.nowText) {
         delete window.isLoadingNowText
-        // 如果本地没有缓存，就用线上的标注记录
-        if (!hasCache && info.annoDetails) {
-          that.$set(that, 'ners', JSON.parse(info.annoDetails))
-          that.$set(that.nersCache, that.nowFile, [...that.ners])
-          that.flushWordsType()
-        }
-        // 更新文件的文本信息
-        that.$set(that.textDic, newFile, info.fileContent)
-        that.nowText = that.textDic[newFile]
-      })
+      } else {
+        get(`/v1/anno/query?projectName=${that.projectName}&fileName=${newFile}`, function (info) {
+          delete window.isLoadingNowText
+          // 如果本地没有缓存，就用线上的标注记录
+          if (!hasCache && info.annoDetails) {
+            that.$set(that, 'ners', JSON.parse(info.annoDetails))
+            that.$set(that.nersCache, that.nowFile, [...that.ners])
+            that.flushWordsType()
+          }
+          // 更新文件的文本信息
+          that.$set(that.textDic, newFile, info.fileContent)
+          that.nowText = that.textDic[newFile]
+        })
+      }
     },
     changeIdx: function (d) {
       const nowIdx = this.files.indexOf(this.nowFile)
