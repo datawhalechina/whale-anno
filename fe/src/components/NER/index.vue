@@ -501,6 +501,10 @@ export default {
           // 更新文本信息
           that.$set(that.files, i, file.name)
           that.$set(that.textDic, file.name, e.target.result)
+          if (i === 0) {
+            // 默认选中第一个文件
+            that.setNowText(file.name)
+          }
         }
         // 读取图片
         // reader.readAsDataURL(file)
