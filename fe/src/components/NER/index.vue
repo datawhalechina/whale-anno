@@ -174,7 +174,7 @@ export default {
       nowText: '', // 当前的文件文本
       ners: [], // 当前文件已标注的实体
       nowNer: {}, // 当前鼠标正在标注的实体
-      nowType: '', // 当前选择的实体类型
+      nowType: 'person', // 当前选择的实体类型
       typeList: ['person', 'location', 'organiztion'], // 实体类型可选列表
       isAnnoDic: {}, // 服务器是否返回已标注过
       nowFocus: '', // 鼠标当前位置的对象，比如标注框/类型按钮/翻页按钮
