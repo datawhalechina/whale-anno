@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <span class="home" @click="goHome">whaleAnno</span>
-    <h1 class="out-title">{{projectName}}（{{projectType}}）</h1>
+    <h1 class="out-title">{{projectName}}{{projectType}}</h1>
     <div class="container" @dragover="stopPrev" @drop="setFiles($event)">
       <div class="left">
         <div class="file-list">
@@ -15,9 +15,7 @@
           <div class="process-bar" :style="{width: `${processRate*100}%`}"></div>
         </div>
         <div class="page-ctl">
-          <span class="page-ctl-last" :style="{opacity: pageNumber === 1 ? 0 : 1}" @click="lastPage">上页</span>
-          <span class="page-number">{{pageNumber}}</span>
-          <span class="page-ctl-next" :style="{opacity: files.length < pageSize ? 0 : 1}" @click="nextPage">下页</span>
+          <span class="page-tips">拖拽文件至上方</span>
         </div>
         <div class="out-btn" @click="outAllNers">导出json结果</div>
       </div>
@@ -102,6 +100,8 @@
 </template>
 
 <script>
+const IS_LOCAL = true // 是否是单机版本
+
 function getColor () {
   const idxs = '0123456789abcdef'
   let color = '#'
@@ -118,6 +118,7 @@ function post (url, data, cb) {
   query('POST', url, data, cb)
 }
 function query (method, url, data = '', cb, tryTimes = 0) {
+  if (IS_LOCAL) return
   var xhr = new XMLHttpRequest()
   xhr.open(method, url)
   xhr.setRequestHeader('content-type', 'application/json')
@@ -156,7 +157,7 @@ export default {
   name: 'NER',
   data () {
     return {
-      configCanCtlType: false, // 是否支持实体类型的调整
+      configCanCtlType: IS_LOCAL, // 是否支持实体类型的调整
       pageNumber: 1,
       pageSize: 20,
       inputType: '',
@@ -745,6 +746,10 @@ export default {
 }
 .left .page-ctl .page-number {
   min-width: 2em;
+}
+.left .page-ctl .page-tips {
+  min-width: 2em;
+  color: #ccc;
 }
 .left .page-ctl-last:hover,
 .left .page-ctl-next:hover,

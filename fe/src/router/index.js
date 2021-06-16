@@ -8,7 +8,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/NER',
+      path: '/',
       name: 'NER',
       component: NER,
       props: {
@@ -16,7 +16,7 @@ export default new Router({
       }
     },
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: home,
       props: true
