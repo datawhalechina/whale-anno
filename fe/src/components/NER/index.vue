@@ -6,6 +6,7 @@
       <div class="left">
         <div class="file-list">
           <div v-for="file in files" :key="file" @click="setNowText(file)"
+            :title=file
             :class="['file', nowFile===file?'selected':'', isAnnoDic[`${projectName}_${file}`]||(nersCache[file]&&nersCache[file].length)?'checked':'', ].join(' ')"
           >
             {{ file }}
@@ -679,6 +680,7 @@ export default {
   flex: 1 1;
   flex-direction: row;
   height: calc(100% - 92px);
+  background: white;
 }
 .title {
   padding: 0 12px;
@@ -693,6 +695,10 @@ export default {
 .left .file {
   margin: 12px 0;
   cursor: pointer;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .left .file.checked {
   position: relative;
@@ -813,6 +819,7 @@ export default {
   margin: 14px;
   border: 1px solid #ccc;
   text-align: left;
+  overflow: auto;
   /* font-size: 0; */
 }
 .ner-box .word {
