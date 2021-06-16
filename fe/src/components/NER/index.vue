@@ -831,6 +831,10 @@ export default {
   overflow: auto;
   /* font-size: 0; */
 }
+/* 隐藏滚动条，防止影响到定位计算、以及左侧文本显示 */
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
 .ner-box .word {
   display: inline-block;
   position: relative;
