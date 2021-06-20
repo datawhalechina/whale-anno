@@ -268,7 +268,7 @@ export default {
       post('/v1/anno/create', {
         projectName: that.projectName,
         fileName: that.nowFile,
-        annoDetails: JSON.stringify(that.ners)
+        annoDetails: that.ners
       })
       that.$set(that.nersCache, that.nowFile, [...that.ners])
       return true
@@ -292,7 +292,7 @@ export default {
           delete window.isLoadingNowText
           // 如果本地没有缓存，就用线上的标注记录
           if (!hasCache && info.annoDetails) {
-            that.$set(that, 'ners', JSON.parse(info.annoDetails))
+            that.$set(that, 'ners', info.annoDetails)
             that.$set(that.nersCache, that.nowFile, [...that.ners])
             that.flushWordsType()
           }
@@ -514,7 +514,10 @@ export default {
       for (const fileName in this.nersCache) {
         const file = fileName
         const text = this.textDic[fileName]
-        const entity = this.nersCache[fileName]
+        const entity = JSON.parse(JSON.stringify(this.nersCache[fileName]))
+        entity.map((item) => {
+          delete item.isSmall;
+        })
         out.push({ file, text, entity })
       }
       this.saveTxt(`${Date.now()}.json`, JSON.stringify(out))
