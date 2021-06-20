@@ -3,7 +3,9 @@ Datawhale自研数据标注工具，让标注更简单
 
 <a name="快速体验"></a>
 ## 快速体验
-- PC端：更简单的NER标注工具：https://tekii.cn/ner/
+- PC端：
+  - 更简单的NER标注工具：https://tekii.cn/ner/
+  - 或者直接release中下载[单机版](https://github.com/datawhalechina/whale-anno/releases)（目前只有Windows版本，Mac需要用到Mac机器打包）
 - 代码体验：从[快速开始](./doc/doc_ch/quickstart.md)开始
 
 <a name="许可证书"></a>
