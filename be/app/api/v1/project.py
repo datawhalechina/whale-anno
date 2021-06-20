@@ -20,6 +20,9 @@ def create_project():
 
         make_dir(PROJECT_PATH.format(project_name))
         write_json(PROJECT_CONFIG_PATH.format(project_name), param)
+        anno_path = ANNO_OUTPUT_PATH.format(project_name)
+        if not os.path.exists(anno_path):
+            write_json(anno_path, [])
 
         ret_info.errCode = 0
 
