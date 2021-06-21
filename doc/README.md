@@ -1,3 +1,7 @@
+# 使用说明
+## 视频教程
+[whaleAnno使用说明](./quickuse.mp4)
+
 ## 1、开启后端
   进入be目录，通过【python3 run.py】开启后台。（开始前请先参考[快速开始](./doc/doc_ch/quickstart.md)做好环境配置）
 ## 2、开启前端
