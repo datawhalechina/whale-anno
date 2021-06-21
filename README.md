@@ -2,7 +2,7 @@
 Datawhale自研数据标注工具
 
 ## Demo
-https://tekii.cn/ner/
+https://tekii.cn/ner
 
 ## 快速开始
 ### 1.环境配置
@@ -43,7 +43,7 @@ cd ./be
 # 启动后端脚本
 python3 ./run.py
 ```
-此时项目的后端会被启动在http://localhost:9060/
+此时项目的后端会被启动在http://localhost:9060
 
 #### 启动前端
 用上述方法，打开一个新的命令行
@@ -53,10 +53,10 @@ cd ./fe
 # 启动前端页面
 npm run start
 ```
-此时项目的前端会被启动在http://localhost:8080/
+此时项目的前端会被启动在http://localhost:8080
 
 ### 3.开始使用
-打开上述前端页面地址（ http://localhost:8080/ ），然后请参考[使用说明](./doc/README.md)开始使用。
+打开上述前端页面地址（http://localhost:8080），然后请参考[使用说明](./doc/README.md)开始使用。
 
 
 ## 开发团队
