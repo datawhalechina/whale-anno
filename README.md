@@ -56,7 +56,7 @@ npm run start
 此时项目的前端会被启动在http://localhost:8080
 
 ### 3.开始使用
-打开上述前端页面地址（ http://localhost:8080 ），然后请参考[使用说明](./doc/README.md)开始使用。除此之外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载。
+打开上述前端页面地址（ http://localhost:8080 ），然后请参考[使用说明](./doc/README.md)开始使用。此外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载。
 
 
 ## 开发团队
