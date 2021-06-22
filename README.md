@@ -6,7 +6,7 @@ https://tekii.cn/ner
 
 ## 功能开发进度
 - NLP：
-  - [x] 命名实体识别标注
+  - [x] 命名实体识别
   - [ ] 文本分类
 - CV：todo 
 
