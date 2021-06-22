@@ -4,6 +4,12 @@ Datawhale自研数据标注工具
 ## Demo
 https://tekii.cn/ner
 
+## 功能开发进度
+- NLP：
+  - [x] 命名实体识别标注
+  - [ ] 文本分类
+- CV：todo 
+
 ## 快速开始
 ### 1.环境配置
 #### 下载所需软件
@@ -56,7 +62,7 @@ npm run start
 此时项目的前端会被启动在http://localhost:8080
 
 ### 3.开始使用
-打开上述前端页面地址（ http://localhost:8080 ），然后请参考[使用说明](./doc/README.md)开始使用。此外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载。
+打开上述前端页面地址（ http://localhost:8080 ），然后点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=2)查看使用教程。此外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载，点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=1)查看单机版使用教程
 
 
 ## 开发团队
