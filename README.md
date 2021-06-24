@@ -11,26 +11,22 @@ https://tekii.cn/ner
 - CV：todo 
 
 ## 快速开始
-### 1.环境配置
-#### 下载所需软件
-##### Python 3
+### 环境配置
+#### Python 3
 经测试whaleAnno后端代码可在Python 3.7.9上运行，您也可以测试其他版本，一般建议安装最新版
 
-##### Node.js
-经测试whaleAnno前端代码可在Node.js v12.16.3上运行，在Node.js v8.10.0安装本地调试工具失败，您也可以测试其他版本，一般建议安装最新版
-
-#### 克隆项目
+### 克隆项目
 ```shell
 git clone https://github.com/datawhalechina/whale-anno.git
 ```
-#### 下载依赖
+### 安装依赖
 ```shell
 # 下载后端依赖
 python3 -m pip install flask
 ```
 后端只依赖了flask这个第三方库
 
-### 2.启动项目
+### 启动项目
 打开终端
 ```shell
 # 进入后端目录
@@ -40,7 +36,7 @@ python3 ./run.py
 ```
 此时项目会被启动在http://localhost:9060/index.html
 
-### 3.开始使用
+### 开始使用
 打开上述地址，然后点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=2)查看使用教程。此外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载，点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=1)查看单机版使用教程
 
 
