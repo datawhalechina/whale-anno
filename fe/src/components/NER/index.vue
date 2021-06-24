@@ -516,7 +516,7 @@ export default {
         const text = this.textDic[fileName]
         const entity = JSON.parse(JSON.stringify(this.nersCache[fileName]))
         entity.map((item) => {
-          delete item.isSmall;
+          delete item.isSmall
         })
         out.push({ file, text, entity })
       }
