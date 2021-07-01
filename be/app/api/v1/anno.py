@@ -7,7 +7,7 @@ import json
 import os
 import zipfile
 
-from app.libs.tools import read_txt_file, write_json, read_json_file, make_dir
+from ...libs.tools import read_txt_file, write_json, read_json_file, make_dir
 
 api = RedPrint('anno')
 

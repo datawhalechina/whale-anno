@@ -10,6 +10,7 @@ api = RedPrint('index')
 
 
 # 访问首页 http://localhost:9060/v1/index
+
 # @api.route('/index')
 @api.route('', methods=['GET'])
 def index():
