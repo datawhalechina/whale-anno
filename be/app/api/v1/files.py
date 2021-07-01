@@ -1,12 +1,13 @@
-from app.config.setting import PROJECT_PATH, ANNO_OUTPUT_PATH
-from app.libs.redprint import RedPrint
+from ...config.setting import PROJECT_PATH, ANNO_OUTPUT_PATH,DOWNLOAD_FILE_LOCATION
 
-from flask import request
+from ...libs.redprint import RedPrint
+
+from flask import request, send_file, Response, send_from_directory,make_response
 import json
 import os
 
-from app.entities.entities import ReturnInfo, FileInfo
-from app.libs.tools import read_json_file
+from ...entities.entities import ReturnInfo, FileInfo
+from ...libs.tools import read_json_file,read_txt_file,write_json
 
 api = RedPrint('files')
 
@@ -56,3 +57,48 @@ def query_file():
         ret_info.errCode = 404
         ret_info.errMsg = str(e)
     return json.dumps(ret_info, default=lambda o: o.__dict__)
+
+
+@api.route('/get_json', methods=['GET'])
+def get_json():
+    ret_info = ReturnInfo()
+    try:
+        project_name = request.args.get("projectName").strip()
+        download_json = []
+        anno_data = read_json_file(PROJECT_PATH.format(project_name)+'/anno.json')
+        for item in anno_data:
+            item_dict = {}
+            item_dict['file'] = item['fileName']
+            item_dict['text'] = read_txt_file(PROJECT_PATH.format(project_name)+'/'+item['fileName'])
+            # 这一步来去掉anno.json中的isSmall
+            for entity in item['annoDetails']:
+                if 'isSmall' in entity:
+                    entity.pop('isSmall')
+            # 也可以用这种方式来实现
+            # item['annoDetails'].pop('isSmall','0')
+            item_dict['entity'] = item['annoDetails']
+            download_json.append(item_dict)
+        write_json(PROJECT_PATH.format(project_name)+'/result.json', download_json)
+
+    except Exception as e:
+        ret_info.errCode = 404
+        ret_info.errMsg = str(e)
+
+    # 返回数据
+    # 1.返回json格式的数据
+    # ret_info.info = download_json
+    # ret_info.errCode = 0
+    # return json.dumps(ret_info, default=lambda o: o.__dict__)
+
+    # 使用send_from_directory 或者使用send_file时要特别注意文件的路径，路径不对的话会报404
+    # 本线默认目录时app下，所以不需要再加/app了，所以不能用PROJECT_PATH
+    # 2.创建response对象返回数据
+    # response = make_response(send_from_directory(DOWNLOAD_FILE_LOCATION.format(project_name),filename='result.json', as_attachment=True))
+    # response.headers["Content-disposition"] = 'attachment; filename=result.json'
+    # return response
+
+    # 3. 直接使用send from directory 返回json文件
+    # return send_from_directory('', filename=DOWNLOAD_FILE_LOCATION.format(project_name),as_attachment=True)
+
+    # 4. 使用send file 返回json文件
+    return send_file(DOWNLOAD_FILE_LOCATION.format(project_name), as_attachment=True, attachment_filename=project_name+'_result.json')

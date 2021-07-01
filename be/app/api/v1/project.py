@@ -1,21 +1,51 @@
-from app.config.setting import PROJECT_NAME, PROJECT_TYPE, ENTITY_TYPES, PROJECTS, PROJECT_PATH, PROJECT_CONFIG_PATH, \
+from ...config.setting import PROJECT_NAME, PROJECT_TYPE, ENTITY_TYPES, PROJECTS, PROJECT_PATH, PROJECT_CONFIG_PATH, \
     ANNO_OUTPUT_PATH
-from app.libs.redprint import RedPrint
+from ...libs.redprint import RedPrint
 
 from flask import request
 import json
 import os
-from app.libs.tools import make_dir, write_json, read_json_file
-from app.entities.entities import Project, ReturnInfo
+from ...libs.tools import make_dir, write_json, read_json_file,unzip_file
+from ...entities.entities import Project, ReturnInfo
+
+
+from ...config.setting import FILE_NAME
+from ...entities.entities import AnnoContents
 
 api = RedPrint('project')
+
+@api.route('/get_zipped_data', methods=['POST'])
+def get_zipped_data():
+    # time.sleep(0.02)
+    ret_info = ReturnInfo()
+    try:
+        project_name = request.form.get('projectName')
+        print(project_name)
+
+        upload_file = request.files['file']
+        file_path = os.path.join(PROJECT_PATH.format(project_name), upload_file.filename)
+        target_path = PROJECT_PATH.format(project_name)
+        # print(file_path)
+        upload_file.save(file_path)
+        print(target_path)
+        unzip_file(file_path,target_path)
+        os.remove(file_path)
+
+    except Exception as e:
+        print(e)
+        ret_info.errCode = 404
+        ret_info.errMsg = str(e)
+
+    return json.dumps(ret_info, default=lambda o: o.__dict__)
 
 
 @api.route('/create', methods=['POST'])
 def create_project():
     ret_info = ReturnInfo()
     try:
+
         param = request.get_json()
+        print(param)
         project_name = param.get(PROJECT_NAME)
 
         make_dir(PROJECT_PATH.format(project_name))

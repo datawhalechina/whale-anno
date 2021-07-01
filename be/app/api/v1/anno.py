@@ -1,18 +1,22 @@
 from app.config.setting import PROJECT_NAME, FILE_NAME, PROJECTS, ANNO_OUTPUT_PATH
 from app.entities.entities import ReturnInfo, AnnoContents, OutputAnno, QueryAnno
 from app.libs.redprint import RedPrint
-
+import time
 from flask import request
 import json
 import os
+import zipfile
 
 from app.libs.tools import read_txt_file, write_json, read_json_file, make_dir
 
 api = RedPrint('anno')
 
 
+
+
 @api.route('/create', methods=['POST'])
 def create_anno():
+    # time.sleep(0.02)
     ret_info = ReturnInfo()
     try:
         param = request.get_json()
@@ -40,6 +44,7 @@ def create_anno():
             ret_info.errCode = 0
 
     except Exception as e:
+        print(e)
         ret_info.errCode = 404
         ret_info.errMsg = str(e)
 
