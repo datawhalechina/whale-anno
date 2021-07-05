@@ -102,6 +102,8 @@
 </template>
 
 <script>
+// 是否是单机版
+const isLocal = false
 function getColor () {
   const idxs = '0123456789abcdef'
   let color = '#'
@@ -509,6 +511,11 @@ export default {
       }
     },
     outAllNers () {
+      if (!isLocal) {
+        // 非单机版，就直接通过url下载
+        window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
+        return true
+      }
       this.nersCache[this.nowFile] = this.ners
       const out = []
       for (const fileName in this.nersCache) {
