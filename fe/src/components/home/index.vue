@@ -48,6 +48,9 @@
             </span>
           </div>
         </div>
+        <p>上传文本：</p>
+        <p style="font-size:10px">（请直接选择文本列表，右键压缩成zip文件）</p>
+        <input type="file" id="file-input" accept=".zip"/>
         <p class="edit-box-btn-area">
           <button class="button" @click="submit">提交</button>
           <button class="button" @click="toList">取消</button>
@@ -72,10 +75,15 @@ function get (url, cb) {
 function post (url, data, cb) {
   query('POST', url, data, cb)
 }
-function query (method, url, data = '', cb) {
+function form (url, data, cb) {
+  query('POST', url, data, cb, {
+    contentType: 'multipart/form-data'
+  })
+}
+function query (method, url, data = '', cb, config = {}) {
   var xhr = new XMLHttpRequest()
   xhr.open(method, url)
-  xhr.setRequestHeader('content-type', 'application/json')
+  if (!config.contentType) xhr.setRequestHeader('content-type', 'application/json')
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       const result = JSON.parse(xhr.responseText)
@@ -86,7 +94,11 @@ function query (method, url, data = '', cb) {
       }
     }
   }
-  xhr.send(JSON.stringify(data))
+  if (config.contentType === 'multipart/form-data') {
+    xhr.send(data)
+  } else {
+    xhr.send(JSON.stringify(data))
+  }
 }
 
 export default {
@@ -124,6 +136,7 @@ export default {
           color: that.types[type].color
         }
       })
+      const projectName = that.projectName
       post('/v1/project/create', {
         projectName: that.projectName,
         projectType: that.projectType,
@@ -131,12 +144,21 @@ export default {
       }, function () {
         that.type = ''
         that.projectName = ''
+        // 查询项目信息
         get('/v1/index', function (info) {
           that.$set(that, 'projects', info)
           that.projectName = ''
           that.projectType = ''
           that.page = 'list'
         })
+        // 如果有上传文件就更新文件
+        const fileInputElement = document.getElementById('file-input')
+        if (fileInputElement.files[0]) {
+          let formData = new FormData()
+          formData.append('projectName', projectName)
+          formData.append('file', fileInputElement.files[0])
+          form('/v1/project/get_zipped_data', formData)
+        }
       })
     },
     toNerAnno (project) {
@@ -146,7 +168,7 @@ export default {
     toEdit (project = {}) {
       console.log('project', project)
       this.projectName = project.projectName || ''
-      this.projectType = project.projectType || ''
+      this.projectType = project.projectType || '命名实体识别' // 配置默认值
       this.page = project.projectName ? 'edit' : 'create'
       // 配置对应的实体类型配置
       const that = this
