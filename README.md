@@ -45,7 +45,7 @@ python3 ./run.py
 | :---: | :---: |
 | **PM** | [谢文睿](https://github.com/Sm1les) |
 | **前端** | [马琦钧](https://github.com/Skypow2012) |
-| **后端** | 付文豪 |
+| **后端** | [张翔宇](https://github.com/xgdyp)、付文豪 |
 
 ## 关注我们
 <div align=center>
