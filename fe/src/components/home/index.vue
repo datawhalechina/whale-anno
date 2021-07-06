@@ -49,7 +49,7 @@
           </div>
         </div>
         <p>上传文本：</p>
-        <p style="font-size:10px">（请选择包含文本文件的zip文件）</p>
+        <p style="font-size:10px">（请选择包含文本文件的zip、rar、7z、tar文件）</p>
         <input type="file" id="file-input" accept=".zip,.rar,.7z,.tar"/>
         <p class="edit-box-btn-area">
           <button class="button" @click="submit">提交</button>
@@ -324,7 +324,7 @@ export default {
   margin: 0;
 }
 .edit-box {
-  width: 260px;
+  width: 280px;
   margin: auto;
   margin-top: 0;
   text-align: left;
