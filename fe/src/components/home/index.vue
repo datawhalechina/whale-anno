@@ -49,8 +49,8 @@
           </div>
         </div>
         <p>上传文本：</p>
-        <p style="font-size:10px">（请直接选择文本列表，右键压缩成zip文件）</p>
-        <input type="file" id="file-input" accept=".zip"/>
+        <p style="font-size:10px">（请选择包含文本文件的zip文件）</p>
+        <input type="file" id="file-input" accept=".zip,.rar,.7z,.tar"/>
         <p class="edit-box-btn-area">
           <button class="button" @click="submit">提交</button>
           <button class="button" @click="toList">取消</button>
