@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.api.v1 import index, project, files, anno
+from ...api.v1 import index, project, files, anno
 
 
 def create_blueprint_v1():

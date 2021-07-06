@@ -1,3 +1,5 @@
+import shutil
+
 from ...config.setting import PROJECT_NAME, PROJECT_TYPE, ENTITY_TYPES, PROJECTS, PROJECT_PATH, PROJECT_CONFIG_PATH, \
     ANNO_OUTPUT_PATH
 from ...libs.redprint import RedPrint
@@ -5,7 +7,7 @@ from ...libs.redprint import RedPrint
 from flask import request
 import json
 import os
-from ...libs.tools import make_dir, write_json, read_json_file,unzip_file
+from ...libs.tools import make_dir, write_json, read_json_file, unzip_file
 from ...entities.entities import Project, ReturnInfo
 
 
@@ -14,23 +16,34 @@ from ...entities.entities import AnnoContents
 
 api = RedPrint('project')
 
+
 @api.route('/get_zipped_data', methods=['POST'])
 def get_zipped_data():
-    # time.sleep(0.02)
     ret_info = ReturnInfo()
     try:
         project_name = request.form.get('projectName')
-        print(project_name)
 
         upload_file = request.files['file']
         file_path = os.path.join(PROJECT_PATH.format(project_name), upload_file.filename)
         target_path = PROJECT_PATH.format(project_name)
-        # print(file_path)
         upload_file.save(file_path)
-        print(target_path)
-        unzip_file(file_path,target_path)
+        file_type = file_path.split('.')[-1]
+        # print("zipped data received: .{} form".format(file_type))
+        unzip_file(file_path, target_path)
         os.remove(file_path)
 
+        # Put files in the folder directly under the project directory
+        for item in os.listdir(target_path):
+            # If item is a folder,copy files in item to project folder,then remove this folder
+            folder_path = target_path + '/' + item
+            if os.path.isdir(folder_path):
+                for file in os.listdir(folder_path):
+                    shutil.copy(folder_path + '/' + file, folder_path + '/../')
+                    # Here  to deal with chinese encode in module zipfile and rarfile
+                    if file_type == 'zip':
+                        os.rename(folder_path + '/../' + file,
+                                  folder_path + '/../' + file.encode('cp437').decode('GBK'))
+                shutil.rmtree(folder_path)
     except Exception as e:
         print(e)
         ret_info.errCode = 404

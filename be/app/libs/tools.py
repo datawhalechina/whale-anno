@@ -1,6 +1,14 @@
 import os
 import json
 import zipfile
+import rarfile
+import py7zr
+import tarfile
+import gzip
+from os import rename
+from os import listdir
+from shutil import move
+
 
 def make_dir(path):
     folder = os.path.exists(path)
@@ -31,16 +39,33 @@ def read_txt_file(file_path):
 
 def unzip_file(zip_src, dst_dir):
     """
-    解压zip文件
-    :param zip_src: zip文件的全路径
-    :param dst_dir: 要解压到的目的文件夹
+    解压数据文件
+    :param zip_src: 压缩包文件的全路径
+    :param dst_dir: 要解压到的项目文件夹
     :return:
     """
-    r = zipfile.is_zipfile(zip_src)
-    if r:
+
+    if zipfile.is_zipfile(zip_src):
         fz = zipfile.ZipFile(zip_src, "r")
         for file in fz.namelist():
             fz.extract(file, dst_dir)
-    else:
-        return "请上传zip类型压缩文件"
+        return "unzip .zip file success"
+    elif rarfile.is_rarfile(zip_src):
+        fr = rarfile.RarFile(zip_src, "r")
+        print(fr.namelist())
+        for file in fr.namelist():
+            fr.extract(file, dst_dir)
+        return "unzip .rar file success"
+    elif py7zr.is_7zfile(zip_src):
+        f7z = py7zr.SevenZipFile(zip_src, "r")
+        f7z.extractall(path=dst_dir)
+        f7z.close()
+    elif tarfile.is_tarfile(zip_src):
 
+        ft = tarfile.TarFile(zip_src, "r")
+        print(ft.getnames())
+        for file in ft.getnames():
+            ft.extract(file,dst_dir)
+
+    else:
+        return "请上传.zip .rar .tar .7z格式的文件"
