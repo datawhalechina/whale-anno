@@ -8,6 +8,8 @@ import os
 
 from ...entities.entities import ReturnInfo, FileInfo
 from ...libs.tools import read_json_file,read_txt_file,write_json
+import threading
+import time
 
 #
 api = RedPrint('files')
@@ -100,7 +102,14 @@ def get_json():
                                                  as_attachment=True))
     response.headers["Content-disposition"] = 'attachment; filename={}_result.json'.format(project_name)
     # print(PROJECT_PATH.format(project_name)+'/result.json')
-    os.remove(PROJECT_PATH.format(project_name)+'/result.json')
+    # os.remove(PROJECT_PATH.format(project_name)+'/result.json')
+
+    def delete():
+        time.sleep(3)
+        os.remove(PROJECT_PATH.format(project_name) + '/result.json')
+        print('result.json has been deleted')
+    thread = threading.Thread(target=delete)
+    thread.start()
     return response
 
     # 3. 直接使用send from directory 返回json文件
