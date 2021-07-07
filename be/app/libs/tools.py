@@ -1,10 +1,10 @@
 import os
 import json
 import zipfile
-import rarfile
-import py7zr
 import tarfile
-import gzip
+# import rarfile
+# import py7zr
+
 from os import rename
 from os import listdir
 from shutil import move
@@ -50,16 +50,16 @@ def unzip_file(zip_src, dst_dir):
         for file in fz.namelist():
             fz.extract(file, dst_dir)
         return "unzip .zip file success"
-    elif rarfile.is_rarfile(zip_src):
-        fr = rarfile.RarFile(zip_src, "r")
-        print(fr.namelist())
-        for file in fr.namelist():
-            fr.extract(file, dst_dir)
-        return "unzip .rar file success"
-    elif py7zr.is_7zfile(zip_src):
-        f7z = py7zr.SevenZipFile(zip_src, "r")
-        f7z.extractall(path=dst_dir)
-        f7z.close()
+    # elif rarfile.is_rarfile(zip_src):
+    #     fr = rarfile.RarFile(zip_src, "r")
+    #     print(fr.namelist())
+    #     for file in fr.namelist():
+    #         fr.extract(file, dst_dir)
+    #     return "unzip .rar file success"
+    # elif py7zr.is_7zfile(zip_src):
+    #     f7z = py7zr.SevenZipFile(zip_src, "r")
+    #     f7z.extractall(path=dst_dir)
+    #     f7z.close()
     elif tarfile.is_tarfile(zip_src):
 
         ft = tarfile.TarFile(zip_src, "r")
@@ -68,4 +68,4 @@ def unzip_file(zip_src, dst_dir):
             ft.extract(file,dst_dir)
 
     else:
-        return "请上传.zip .rar .tar .7z格式的文件"
+        return "请上传.zip .tar格式的文件"
