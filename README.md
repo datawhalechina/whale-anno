@@ -22,7 +22,7 @@ git clone https://github.com/datawhalechina/whale-anno.git
 ### 安装依赖
 ```shell
 # 下载后端依赖
-python3 -m pip install flask
+python3 -m pip install flask==2.0.0
 ```
 后端只依赖了flask这个第三方库
 
