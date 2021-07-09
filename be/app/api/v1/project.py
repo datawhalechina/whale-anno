@@ -34,15 +34,17 @@ def get_zipped_data():
 
         # Put files in the folder directly under the project directory
         for item in os.listdir(target_path):
+
             # If item is a folder,copy files in item to project folder,then remove this folder
             folder_path = target_path + '/' + item
             if os.path.isdir(folder_path):
                 for file in os.listdir(folder_path):
-                    shutil.copy(folder_path + '/' + file, folder_path + '/../')
-                    # Here  to deal with chinese encode in module zipfile and rarfile
-                    if file_type == 'zip':
-                        os.rename(folder_path + '/../' + file,
-                                  folder_path + '/../' + file.encode('cp437').decode('GBK'))
+                    if file.split('.')[-1] == 'txt':
+                        shutil.copy(folder_path + '/' + file, folder_path + '/../')
+                        # Here  to deal with chinese encode in module zipfile and rarfile
+                        if file_type == 'zip':
+                            os.rename(folder_path + '/../' + file,
+                                      folder_path + '/../' + file.encode('cp437').decode('GBK'))
                 shutil.rmtree(folder_path)
     except Exception as e:
         print(e)
