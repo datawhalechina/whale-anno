@@ -157,7 +157,7 @@ export default {
   name: 'NER',
   data () {
     return {
-      configCanCtlType: false, // 是否支持实体类型的调整
+      configCanCtlType: isLocal, // 是否支持实体类型的调整
       pageNumber: 1,
       pageSize: 20,
       inputType: '',
