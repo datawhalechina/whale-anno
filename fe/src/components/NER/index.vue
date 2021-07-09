@@ -93,7 +93,6 @@
             backgroundColor: types[ner.type] ? types[ner.type].color : `#fff`,
           }"
         >
-          <span class="result-type">{{ ner.type.substr(0,2) }}</span>
           <span class="result-name">{{ ner.name }}</span>
         </div>
       </div>
@@ -890,7 +889,7 @@ export default {
   line-height: 22px;
 }
 .result-name {
-  width: calc(100% - 30% - 8px);
+  width: calc(100% - 8px);
 }
 
 .word-rect-area {
