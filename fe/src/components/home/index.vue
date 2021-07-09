@@ -49,8 +49,8 @@
           </div>
         </div>
         <p>上传文本：</p>
-        <p style="font-size:10px">（请选择包含文本文件的zip、rar、7z、tar文件）</p>
-        <input type="file" id="file-input" accept=".zip,.rar,.7z,.tar"/>
+        <p style="font-size:10px">（请选择包含文本文件的zip、tar文件）</p>
+        <input type="file" id="file-input" accept=".zip,.tar"/>
         <p class="edit-box-btn-area">
           <button class="button" @click="submit">提交</button>
           <button class="button" @click="toList">取消</button>
