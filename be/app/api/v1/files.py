@@ -66,7 +66,8 @@ def query_file():
 def get_json():
     ret_info = ReturnInfo()
     try:
-        project_name = request.args.get("projectName").strip()
+        
+        project_name = request.args.get("projectName")
         download_json = []
         anno_data = read_json_file(PROJECT_PATH.format(project_name)+'/anno.json')
         for item in anno_data:
@@ -98,9 +99,9 @@ def get_json():
     # 本线默认目录时app下，所以不需要再加/app了，所以不能用PROJECT_PATH
     # 2.创建response对象返回数据
     #使用response可以将result.json再删除掉
-    response = make_response(send_from_directory('', filename=DOWNLOAD_FILE_LOCATION.format(project_name),
+    response = make_response(send_from_directory(directory='', path=DOWNLOAD_FILE_LOCATION.format(project_name),
                                                  as_attachment=True))
-    response.headers["Content-disposition"] = 'attachment; filename={}_result.json'.format(project_name)
+    response.headers["Content-disposition"] = 'attachment; filename=result.json'
     # print(PROJECT_PATH.format(project_name)+'/result.json')
     # os.remove(PROJECT_PATH.format(project_name)+'/result.json')
 
