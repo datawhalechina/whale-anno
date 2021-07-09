@@ -1,4 +1,3 @@
-.idea
-b3/.idea
-be/__pycache__
-be/app/projects/*
+.idea/
+
+be/.idea
