@@ -61,14 +61,8 @@
 </template>
 
 <script>
-function getColor () {
-  const idxs = '0123456789abcdef'
-  let color = '#'
-  for (let i = 0; i < 6; i += 1) {
-    color += idxs[Math.random() * idxs.length | 0]
-  }
-  return color
-}
+import { getColor } from '../../js/color'
+
 function get (url, cb) {
   query('GET', url, '', cb)
 }
@@ -197,7 +191,7 @@ export default {
       if (!newType) return false
       if (that.types[newType]) return false
       that.$set(that.types, newType, {
-        color: getColor()
+        color: getColor(that.types)
       })
       that.typeList.push(newType)
       console.log(that.typeList)
