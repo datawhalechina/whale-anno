@@ -832,6 +832,10 @@ export default {
   overflow: auto;
   /* font-size: 0; */
 }
+.ner-box::-webkit-scrollbar {
+  /* 隐藏标注区域的滚动条，防止影响到标注定位 */
+  width: 0;
+}
 .ner-box .word {
   display: inline-block;
   position: relative;
