@@ -1,0 +1,1 @@
+[{"fileName": "first.txt", "annoDetails": [{"name": "是一个测", "type": "test1", "start": 1, "end": 5, "isSmall": false}, {"name": "测", "type": "test2", "start": 4, "end": 5, "isSmall": true}, {"name": "文", "type": "test2", "start": 6, "end": 7}], "isAnno": true}]

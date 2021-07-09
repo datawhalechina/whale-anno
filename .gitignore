@@ -1,3 +1,7 @@
 .idea/
 
 be/.idea
+/be/app/projects/*
+
+
+__pycache__
