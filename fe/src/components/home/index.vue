@@ -52,6 +52,7 @@
         <p style="font-size:10px">（请选择包含文本文件的zip、tar文件）</p>
         <input type="file" id="file-input" accept=".zip,.tar"/>
         <p class="edit-box-btn-area">
+          <button class="button danger" @click="del" v-if="page==='edit'">删除</button>
           <button class="button" @click="submit">提交</button>
           <button class="button" @click="toList">取消</button>
         </p>
@@ -122,6 +123,30 @@ export default {
     setType (ev) {
       this.projectType = ev.target.value
     },
+    del () {
+      // 删除项目
+      const that = this
+      if (prompt(`请输入${this.projectName}来确认删除。`) === this.projectName) {
+        get(`/v1/project/delete_program?projectName=${this.projectName}`, function () {
+          that.init()
+        })
+      } else {
+        alert('输入错误，删除失败')
+      }
+    },
+    init () {
+      // 初始化主页列表
+      const that = this
+      that.type = ''
+      that.projectName = ''
+      // 查询项目信息
+      get('/v1/index', function (info) {
+        that.$set(that, 'projects', info)
+        that.projectName = ''
+        that.projectType = ''
+        that.page = 'list'
+      })
+    },
     submit () {
       const that = this
       const newEntityTypes = that.typeList.map((type) => {
@@ -136,15 +161,7 @@ export default {
         projectType: that.projectType,
         entityTypes: JSON.stringify(newEntityTypes)
       }, function () {
-        that.type = ''
-        that.projectName = ''
-        // 查询项目信息
-        get('/v1/index', function (info) {
-          that.$set(that, 'projects', info)
-          that.projectName = ''
-          that.projectType = ''
-          that.page = 'list'
-        })
+        that.init()
         // 如果有上传文件就更新文件
         const fileInputElement = document.getElementById('file-input')
         if (fileInputElement.files[0]) {
@@ -280,6 +297,9 @@ export default {
   border-radius: 4px;
   border: 1px solid #ccc;
   padding: 5px 10px;
+}
+.button.danger {
+  background-color: #ff0000;
 }
 .project-box-titile {
   margin: auto;
