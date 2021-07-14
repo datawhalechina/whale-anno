@@ -16,7 +16,21 @@ from ...entities.entities import AnnoContents
 
 api = RedPrint('project')
 
+@api.route('/delete_program', methods=['GET'])
+def delete_program():
+    ret_info = ReturnInfo()
+    try:
+        project_name = request.args.get('projectName')
+        project_path = PROJECT_PATH.format(project_name)
 
+        shutil.rmtree(project_path)
+        print("ok")
+    except Exception as e:
+        print(e)
+        ret_info.errCode = 404
+        ret_info.errMsg = str(e)
+
+    return json.dumps(ret_info, default=lambda o: o.__dict__)
 @api.route('/get_zipped_data', methods=['POST'])
 def get_zipped_data():
     ret_info = ReturnInfo()

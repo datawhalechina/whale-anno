@@ -66,7 +66,7 @@ def query_file():
 def get_json():
     ret_info = ReturnInfo()
     try:
-        
+
         project_name = request.args.get("projectName")
         download_json = []
         anno_data = read_json_file(PROJECT_PATH.format(project_name)+'/anno.json')
