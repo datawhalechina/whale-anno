@@ -1,13 +1,13 @@
-from ...config.setting import PROJECT_PATH, ANNO_OUTPUT_PATH,DOWNLOAD_FILE_LOCATION
+from ...config.setting import PROJECT_PATH, ANNO_OUTPUT_PATH, DOWNLOAD_FILE_LOCATION
 
 from ...libs.redprint import RedPrint
 
-from flask import request, send_file, Response, send_from_directory,make_response
+from flask import request, send_file, Response, send_from_directory, make_response
 import json
 import os
 
 from ...entities.entities import ReturnInfo, FileInfo
-from ...libs.tools import read_json_file,read_txt_file,write_json
+from ...libs.tools import read_json_file, read_txt_file, write_json
 import threading
 import time
 
@@ -29,8 +29,6 @@ def query_file():
         if 'anno.json' in file_names:
             file_names.remove('anno.json')
 
-
-
         anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
 
         # 判断路径是否存在
@@ -42,7 +40,8 @@ def query_file():
                 ret_info.info.append(file_info)
                 print(2)
         else:
-            for file_name in sorted(file_names)[(page_number - 1) * page_size: (page_number - 1) * page_size + page_size]:
+            for file_name in sorted(file_names)[
+                             (page_number - 1) * page_size: (page_number - 1) * page_size + page_size]:
                 file_info = FileInfo()
                 file_info.fileName = file_name
 
@@ -62,6 +61,33 @@ def query_file():
     return json.dumps(ret_info, default=lambda o: o.__dict__)
 
 
+@api.route('/get_labels', methods=['GET'])
+def get_lables():
+    ret_info = ReturnInfo()
+    try:
+        project_name = request.args.get("projectName")
+        # current_filename = request.args.get("current_filename")
+        download_json = []
+        anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
+        print(len(anno_data))
+        for item in anno_data:
+
+            item_dict = {'file': item['fileName'],
+                         'text': read_txt_file(PROJECT_PATH.format(project_name) + '/' + item['fileName']),
+                         'labels': list(set([x['type'] for x in item["annoDetails"]]))}
+            print(item_dict)
+            download_json.append(item_dict)
+            # for detail in item["annoDetails"]:
+            #     label_set = set()
+            #     label_set.add(detail['type'])
+            #     item_dict['labels'] = list(label_set)
+            # download_json.append(item_dict)
+        # print(download_json)
+    except Exception as e:
+        ret_info.errCode = 404
+        ret_info.errMsg = str(e)
+    return json.dumps(download_json, default=lambda o: o.__dict__)
+
 @api.route('/get_json', methods=['GET'])
 def get_json():
     ret_info = ReturnInfo()
@@ -69,12 +95,12 @@ def get_json():
 
         project_name = request.args.get("projectName")
         download_json = []
-        anno_data = read_json_file(PROJECT_PATH.format(project_name)+'/anno.json')
+        anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
         for item in anno_data:
             item_dict = {}
             item_dict['file'] = item['fileName']
 
-            item_dict['text'] = read_txt_file(PROJECT_PATH.format(project_name)+'/'+item['fileName'])
+            item_dict['text'] = read_txt_file(PROJECT_PATH.format(project_name) + '/' + item['fileName'])
             # 这一步来去掉anno.json中的isSmall
             for entity in item['annoDetails']:
                 if 'isSmall' in entity:
@@ -83,7 +109,7 @@ def get_json():
             # item['annoDetails'].pop('isSmall','0')
             item_dict['entity'] = item['annoDetails']
             download_json.append(item_dict)
-        write_json(PROJECT_PATH.format(project_name)+'/result.json', download_json)
+        write_json(PROJECT_PATH.format(project_name) + '/result.json', download_json)
 
     except Exception as e:
         ret_info.errCode = 404
@@ -98,10 +124,11 @@ def get_json():
     # 使用send_from_directory 或者使用send_file时要特别注意文件的路径，路径不对的话会报404
     # 本线默认目录时app下，所以不需要再加/app了，所以不能用PROJECT_PATH
     # 2.创建response对象返回数据
-    #使用response可以将result.json再删除掉
+    # 使用response可以将result.json再删除掉
     response = make_response(send_from_directory(directory='', path=DOWNLOAD_FILE_LOCATION.format(project_name),
                                                  as_attachment=True))
     response.headers["Content-disposition"] = 'attachment; filename=result.json'
+
     # print(PROJECT_PATH.format(project_name)+'/result.json')
     # os.remove(PROJECT_PATH.format(project_name)+'/result.json')
 
@@ -109,6 +136,7 @@ def get_json():
         time.sleep(3)
         os.remove(PROJECT_PATH.format(project_name) + '/result.json')
         print('result.json has been deleted')
+
     thread = threading.Thread(target=delete)
     thread.start()
     return response
