@@ -37,6 +37,14 @@ def read_txt_file(file_path):
     return data
 
 
+def get_project_file(project_path):
+
+    file_name = os.listdir(project_path)
+    file_name.remove('anno.json')
+    file_name.remove('config.json')
+    return file_name
+
+
 def unzip_file(zip_src, dst_dir):
     """
     解压数据文件
@@ -65,7 +73,7 @@ def unzip_file(zip_src, dst_dir):
         ft = tarfile.TarFile(zip_src, "r")
         print(ft.getnames())
         for file in ft.getnames():
-            ft.extract(file,dst_dir)
+            ft.extract(file, dst_dir)
 
     else:
         return "请上传.zip .tar格式的文件"

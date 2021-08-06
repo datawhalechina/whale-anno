@@ -7,7 +7,7 @@ import json
 import os
 
 from ...entities.entities import ReturnInfo, FileInfo
-from ...libs.tools import read_json_file, read_txt_file, write_json
+from ...libs.tools import read_json_file, read_txt_file, write_json, get_project_file
 import threading
 import time
 
@@ -65,21 +65,37 @@ def query_file():
 def get_lables():
     ret_info = ReturnInfo()
     try:
-        project_name = request.args.get("projectName")
-        # current_filename = request.args.get("current_filename")
+
         download_json = []
+        project_name = request.args.get("projectName")
+        project_path = PROJECT_PATH.format(project_name)
+        print(project_path)
+        project_file_list = get_project_file(project_path)
+        print(project_file_list)
+        # current_filename = request.args.get("current_filename")
+        anno_data_set = set()
         anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
         for item in anno_data:
-
             item_dict = {'file': item['fileName'],
-                         'text': read_txt_file(PROJECT_PATH.format(project_name) + '/' + item['fileName']),
+                         # 'text': read_txt_file(PROJECT_PATH.format(project_name) + '/' + item['fileName']),
                          'labels': list(set([x['type'] for x in item["annoDetails"]]))}
             print(item_dict)
+            anno_data_set.add(item['fileName'])
             download_json.append(item_dict)
+        #add no label data
+        for filename in set(project_file_list).difference(anno_data_set):
+            item_dict = {'file': filename,
+                         'labels': []
+                         }
+            download_json.append(item_dict)
+
+        # print(set(project_file_list).difference(anno_data_set))
+
     except Exception as e:
         ret_info.errCode = 404
         ret_info.errMsg = str(e)
     return json.dumps(download_json, default=lambda o: o.__dict__)
+
 
 @api.route('/get_json', methods=['GET'])
 def get_json():
@@ -87,6 +103,9 @@ def get_json():
     try:
 
         project_name = request.args.get("projectName")
+        project_path = PROJECT_PATH.format(project_name)
+        project_file_list = get_project_file(project_path)
+        anno_data_set = set()
         download_json = []
         anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
         for item in anno_data:
@@ -101,7 +120,17 @@ def get_json():
             # 也可以用这种方式来实现
             # item['annoDetails'].pop('isSmall','0')
             item_dict['entity'] = item['annoDetails']
+            anno_data_set.add(item['fileName'])
             download_json.append(item_dict)
+        print(anno_data_set)
+        # add no label data
+        for filename in set(project_file_list).difference(anno_data_set):
+            item_dict = {'file': filename,
+                         'txt': read_txt_file(PROJECT_PATH.format(project_name) + '/' + filename),
+                         'entity': []
+                         }
+            download_json.append(item_dict)
+
         write_json(PROJECT_PATH.format(project_name) + '/result.json', download_json)
 
     except Exception as e:
