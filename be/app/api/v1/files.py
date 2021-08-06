@@ -69,7 +69,6 @@ def get_lables():
         # current_filename = request.args.get("current_filename")
         download_json = []
         anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
-        print(len(anno_data))
         for item in anno_data:
 
             item_dict = {'file': item['fileName'],
@@ -77,12 +76,6 @@ def get_lables():
                          'labels': list(set([x['type'] for x in item["annoDetails"]]))}
             print(item_dict)
             download_json.append(item_dict)
-            # for detail in item["annoDetails"]:
-            #     label_set = set()
-            #     label_set.add(detail['type'])
-            #     item_dict['labels'] = list(label_set)
-            # download_json.append(item_dict)
-        # print(download_json)
     except Exception as e:
         ret_info.errCode = 404
         ret_info.errMsg = str(e)
