@@ -107,14 +107,13 @@ import { saveAsFile } from '../../js/utils.js'
 // 是否是单机版
 const isLocal = false
 
-function get (url, cb, config={}) {
+function get (url, cb, config = {}) {
   query('GET', url, '', cb, config)
 }
-function post (url, data, cb, config={}) {
+function post (url, data, cb, config = {}) {
   query('POST', url, data, cb, config)
 }
-function query (method, url, data = '', cb, config = {}) { 
-  console.log('config',config); 
+function query (method, url, data = '', cb, config = {}) {
   config.tryTimes = config.tryTimes || 0
   config.isDirect = config.isDirect || false
 
@@ -127,13 +126,12 @@ function query (method, url, data = '', cb, config = {}) {
         return cb(xhr.responseText) // 直接返回请求结果
       }
       const result = JSON.parse(xhr.responseText)
-      console.log('result',result);
       if (result.errCode !== 0) {
         if (config.tryTimes >= 2) {
           alert(result.errMsg)
         } else {
           setTimeout(() => {
-            config.tryTimes += 1;
+            config.tryTimes += 1
             query(method, url, data = '', cb, config)
           }, 200)
         }
@@ -338,10 +336,11 @@ export default {
      * @param 类型
      */
     setType: function (type, ev) {
-      if (this.projectType === '命名识别识别')
+      if (this.projectType === '命名识别识别') {
         this.$set(this, 'nowType', type)
+      }
       if (this.projectType === '文本分类') {
-        let typeIdx = -1;
+        let typeIdx = -1
         this.ners.some((ner, idx) => {
           if (ner.type === type) {
             typeIdx = idx
@@ -446,7 +445,7 @@ export default {
       this.$set(this, 'wordsOutType', this.wordsOutType)
     },
     startSelect: function (idx, event) {
-      if (this.projectType !== '命名实体识别') return;
+      if (this.projectType !== '命名实体识别') return
       if (event.which === 3) {
         event.preventDefault()
         // 右键删除对应的图标
@@ -534,12 +533,14 @@ export default {
     outAllNers () {
       if (!isLocal) {
         // 非单机版，就直接通过url下载
-        if (this.projectType === '命名实体识别')
+        if (this.projectType === '命名实体识别') {
           window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
-        if (this.projectType === '文本分类')
-          get(`/v1/files/get_labels?projectName=${this.projectName}`, function(text){
-            saveAsFile(text, 'labels.json');
-          }, {isDirect : true})
+        }
+        if (this.projectType === '文本分类') {
+          get(`/v1/files/get_labels?projectName=${this.projectName}`, (text) => {
+            saveAsFile(text, 'labels.json')
+          }, {isDirect: true})
+        }
         return true
       }
       this.nersCache[this.nowFile] = this.ners
@@ -584,13 +585,15 @@ export default {
       updateType2Server(that.projectName, that.typeList, that.types)
     },
     // 判断标签按钮是否需要被显示成按下
-    isTypeSelected: function(type) {
-      if (this.projectType === '命名实体识别') 
-        return this.nowType === type;
-      if (this.projectType === '文本分类')
-        return this.ners.some((ner)=>{
+    isTypeSelected (type) {
+      if (this.projectType === '命名实体识别') {
+        return this.nowType === type
+      }
+      if (this.projectType === '文本分类') {
+        return this.ners.some((ner) => {
           return ner.type === type
         })
+      }
     }
   },
   watch: {
