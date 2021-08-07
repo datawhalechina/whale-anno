@@ -102,29 +102,39 @@
 
 <script>
 import { getColor } from '../../js/color.js'
+import { saveAsFile } from '../../js/utils.js'
 
 // 是否是单机版
 const isLocal = false
 
-function get (url, cb) {
-  query('GET', url, '', cb)
+function get (url, cb, config={}) {
+  query('GET', url, '', cb, config)
 }
-function post (url, data, cb) {
-  query('POST', url, data, cb)
+function post (url, data, cb, config={}) {
+  query('POST', url, data, cb, config)
 }
-function query (method, url, data = '', cb, tryTimes = 0) {
+function query (method, url, data = '', cb, config = {}) { 
+  console.log('config',config); 
+  config.tryTimes = config.tryTimes || 0
+  config.isDirect = config.isDirect || false
+
   var xhr = new XMLHttpRequest()
   xhr.open(method, url)
   xhr.setRequestHeader('content-type', 'application/json')
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
+      if (config.isDirect) {
+        return cb(xhr.responseText) // 直接返回请求结果
+      }
       const result = JSON.parse(xhr.responseText)
+      console.log('result',result);
       if (result.errCode !== 0) {
-        if (tryTimes >= 2) {
+        if (config.tryTimes >= 2) {
           alert(result.errMsg)
         } else {
           setTimeout(() => {
-            query(method, url, data = '', cb, tryTimes + 1)
+            config.tryTimes += 1;
+            query(method, url, data = '', cb, config)
           }, 200)
         }
       } else {
@@ -527,7 +537,9 @@ export default {
         if (this.projectType === '命名实体识别')
           window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
         if (this.projectType === '文本分类')
-          window.open(`/v1/files/get_labels?projectName=${this.projectName}`, '_self')
+          get(`/v1/files/get_labels?projectName=${this.projectName}`, function(text){
+            saveAsFile(text, 'labels.json');
+          }, {isDirect : true})
         return true
       }
       this.nersCache[this.nowFile] = this.ners
