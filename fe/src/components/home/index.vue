@@ -26,6 +26,7 @@
         <p>类型：
           <select class="type-input" name="type" @change="setType" :value="projectType">
             <option value ="命名实体识别">命名实体识别</option>
+            <option value ="文本分类">文本分类</option>
           </select>
         </p>
         <div class="title">

@@ -25,7 +25,7 @@
         <div class="title">
           <span>选择标签：</span>
           <div class="type-box">
-            <span v-for="type in typeList" :key="type" @click="setType(type)" @contextmenu="delType(type, $event)" :class="nowType===type?'type selected':'type'"
+            <span v-for="type in typeList" :key="type" @click="setType(type)" @contextmenu="delType(type, $event)" :class="isTypeSelected(type)?'type selected':'type'"
               :style="{
                 backgroundColor: types[type] ? types[type].color : '#fff'
               }"
@@ -328,7 +328,24 @@ export default {
      * @param 类型
      */
     setType: function (type, ev) {
-      this.$set(this, 'nowType', type)
+      if (this.projectType === '命名识别识别')
+        this.$set(this, 'nowType', type)
+      if (this.projectType === '文本分类') {
+        let typeIdx = -1;
+        this.ners.some((ner, idx) => {
+          if (ner.type === type) {
+            typeIdx = idx
+            return ner.type === type
+          }
+        })
+        if (typeIdx === -1) {
+          this.ners.push({type})
+        } else {
+          this.ners.splice(typeIdx, 1)
+        }
+        this.$set(this, 'nowType', type)
+        this.save()
+      }
     },
     delType: function (type, ev) {
       if (!this.configCanCtlType) return false
@@ -419,6 +436,7 @@ export default {
       this.$set(this, 'wordsOutType', this.wordsOutType)
     },
     startSelect: function (idx, event) {
+      if (this.projectType !== '命名实体识别') return;
       if (event.which === 3) {
         event.preventDefault()
         // 右键删除对应的图标
@@ -506,7 +524,10 @@ export default {
     outAllNers () {
       if (!isLocal) {
         // 非单机版，就直接通过url下载
-        window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
+        if (this.projectType === '命名实体识别')
+          window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
+        if (this.projectType === '文本分类')
+          window.open(`/v1/files/get_labels?projectName=${this.projectName}`, '_self')
         return true
       }
       this.nersCache[this.nowFile] = this.ners
@@ -549,6 +570,15 @@ export default {
       console.log(tarType, ev.target.value)
       that.$set(that.types[tarType], 'color', ev.target.value)
       updateType2Server(that.projectName, that.typeList, that.types)
+    },
+    // 判断标签按钮是否需要被显示成按下
+    isTypeSelected: function(type) {
+      if (this.projectType === '命名实体识别') 
+        return this.nowType === type;
+      if (this.projectType === '文本分类')
+        return this.ners.some((ner)=>{
+          return ner.type === type
+        })
     }
   },
   watch: {
@@ -584,8 +614,8 @@ export default {
         return entityType.type
       })
       that.types = types
-      // 进入时默认选择第一个标签，防止弹出请选择标签的提示
-      if (that.typeList && that.typeList[0]) that.nowType = that.typeList[0]
+      // 进入命名实体识别时默认选择第一个标签，防止弹出请选择标签的提示
+      if (that.typeList && that.typeList[0] && projectType === '命名实体识别') that.nowType = that.typeList[0]
       get(`/v1/files/query?projectName=${projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
         that.$set(that, 'files', info.map((item) => {
           if (typeof item === 'string') return item
