@@ -339,7 +339,7 @@ export default {
      * @param 类型
      */
     setType: function (type, ev) {
-      if (this.projectType === '命名识别识别') {
+      if (this.projectType === '命名实体识别') {
         this.$set(this, 'nowType', type)
       }
       if (this.projectType === '文本分类') {
