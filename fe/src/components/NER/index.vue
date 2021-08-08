@@ -76,10 +76,18 @@
               </span>
             </span>
           </div>
-          <span class="word" v-for="(word, idx) in nowText" :key="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @mousemove="pointWord(idx)"
-          >
-            {{ word }}
-          </span>
+          <div v-if="projectType === '命名实体识别'">
+            <span class="word" v-for="(word, idx) in nowText" :key="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @mousemove="pointWord(idx)"
+            >
+              {{ word }}
+            </span>
+          </div>
+          <div v-if="projectType === '文本分类'">
+            <template v-for="(word, idx) in nowText">
+              <span class="word" v-if="word !== '\n'" :key="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @mousemove="pointWord(idx)">{{ word }}</span>
+              <br v-if="word === '\n'" :key="idx"/>
+            </template>
+          </div>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
