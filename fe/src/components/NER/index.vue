@@ -132,7 +132,7 @@ function query (method, url, data = '', cb, config = {}) {
         } else {
           setTimeout(() => {
             config.tryTimes += 1
-            query(method, url, data = '', cb, config)
+            query(method, url, data, cb, config)
           }, 200)
         }
       } else {
