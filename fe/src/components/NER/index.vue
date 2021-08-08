@@ -852,6 +852,10 @@ export default {
   border: 1px solid #ccc;
   border-bottom: 3px solid #ccc;
   text-align: center;
+  filter: grayscale(1);
+}
+.type.selected {
+  filter: unset;
 }
 .type.selected,
 .result.selected {
