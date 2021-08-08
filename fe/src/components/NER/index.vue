@@ -538,7 +538,7 @@ export default {
         }
         if (this.projectType === '文本分类') {
           get(`/v1/files/get_labels?projectName=${this.projectName}`, (text) => {
-            saveAsFile(text, 'labels.json')
+            saveAsFile(JSON.stringify(JSON.parse(text)), 'labels.json')
           }, {isDirect: true})
         }
         return true
