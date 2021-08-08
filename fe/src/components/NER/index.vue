@@ -228,30 +228,33 @@ export default {
     }
   },
   methods: {
+    // 获取文件列表
+    getFiles () {
+      const that = this
+      get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
+        that.$set(that, 'files', info.map((item) => {
+          if (typeof item === 'string') return item
+          that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
+          return item.fileName
+        }))
+        // 如果文件未选中，就选中第一个
+        if (that.files[0] && that.nowFile !== that.files[0]) {
+          that.setNowText(that.files[0])
+        }
+      })
+    },
     lastPage () {
       const that = this
       if (that.pageNumber > 1) {
         that.pageNumber = that.pageNumber - 1
-        get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-          that.$set(that, 'files', info.map((item) => {
-            if (typeof item === 'string') return item
-            that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
-            return item.fileName
-          }))
-        })
+        that.getFiles()
       }
     },
     nextPage () {
       const that = this
       if (that.files.length === that.pageSize) {
         that.pageNumber = that.pageNumber + 1
-        get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-          that.$set(that, 'files', info.map((item) => {
-            if (typeof item === 'string') return item
-            that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
-            return item.fileName
-          }))
-        })
+        that.getFiles()
       }
     },
     goHome: function () {
@@ -503,7 +506,7 @@ export default {
       event.preventDefault()
       // 取得拖进来的文件
       var data = event.dataTransfer
-      var files = data.files
+      var files = data.files || []
       // 将其传给真正的处理文件的函数
       this.processFiles(files)
     },
@@ -631,13 +634,7 @@ export default {
       that.types = types
       // 进入命名实体识别时默认选择第一个标签，防止弹出请选择标签的提示
       if (that.typeList && that.typeList[0] && projectType === '命名实体识别') that.nowType = that.typeList[0]
-      get(`/v1/files/query?projectName=${projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-        that.$set(that, 'files', info.map((item) => {
-          if (typeof item === 'string') return item
-          that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
-          return item.fileName
-        }))
-      })
+      that.getFiles()
     }
     function calcColumnWordCount () {
       const nerBox = document.getElementById('ner-box')
