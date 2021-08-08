@@ -849,25 +849,17 @@ export default {
 .type {
   position: relative;
   box-sizing: content-box;
-  border: 1px solid #ccc;
-  border-bottom: 3px solid #ccc;
+  border: 2px solid #0000;
   text-align: center;
-  filter: grayscale(1);
 }
 .type.selected {
-  filter: unset;
+  border: 2px solid #000;
 }
-.type.selected,
 .result.selected {
   position: relative;
   opacity: 1 !important;
   background: white;
   border: 0;
-}
-.type.selected {
-  transform: translateX(0px) translateY(2px);
-  border: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
 }
 .ner-box {
   position: relative;
