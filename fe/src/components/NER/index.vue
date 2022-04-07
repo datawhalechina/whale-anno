@@ -557,7 +557,7 @@ export default {
         return false
       }
       const isRepeat = this.checkIsRepeat(this.nowNer)
-      if (!isRepeat && this.nowNer.isMove) {
+      if (!isRepeat && this.nowNer.isMove && this.nowNer.name) {
         console.log(this.nowNer)
         delete this.nowNer.isMove
         this.ners.push(this.nowNer)
