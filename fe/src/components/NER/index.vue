@@ -1,11 +1,12 @@
 <template>
   <div class="layout">
     <span class="home" @click="goHome">whaleAnno</span>
+    <span class="now-file">{{ nowFile }}</span>
     <h1 class="out-title">{{projectName}}（{{projectType}}）</h1>
     <div class="container" @dragover="stopPrev" @drop="setFiles($event)">
       <div class="left">
-        <div class="file-list">
-          <div v-for="file in files" :key="file" @click="setNowText(file)"
+        <div class="file-list" id="file-list">
+          <div v-for="file in files" :key="file" :id="file" @click="setNowText(file)"
             :title=file
             :class="['file', nowFile===file?'selected':'', isAnnoDic[`${projectName}_${file}`]||(nersCache[file]&&nersCache[file].length)?'checked':'', ].join(' ')"
           >
@@ -262,13 +263,17 @@ export default {
     getFiles () {
       const that = this
       get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
-        that.$set(that, 'files', info.map((item) => {
+        let newFiles = info.map((item) => {
           if (typeof item === 'string') return item
           that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
           return item.fileName
-        }))
+        })
+        if (that.files.indexOf(newFiles[0]) === -1) {
+          that.$set(that, 'files', [...that.files, ...newFiles])
+        }
+        console.log(that.files)
         // 如果文件未选中，就选中第一个
-        if (that.files[0] && that.nowFile !== that.files[0]) {
+        if (that.files[0] && !that.nowFile) {
           that.setNowText(that.files[0])
         }
       })
@@ -282,10 +287,10 @@ export default {
     },
     nextPage () {
       const that = this
-      if (that.files.length === that.pageSize) {
-        that.pageNumber = that.pageNumber + 1
-        that.getFiles()
-      }
+      // if (that.files.length === that.pageSize) {
+      that.pageNumber = that.pageNumber + 1
+      that.getFiles()
+      // }
     },
     goHome: function () {
       this.$router.push({path: '/'})
@@ -337,6 +342,17 @@ export default {
           that.nowText = that.textDic[newFile]
         })
       }
+      if (that.files.indexOf(newFile) >= (that.files.length - 1) - 2) {
+        // 到倒数第3个文件，就获取下一页
+        that.pageNumber = that.pageNumber + 1
+        that.getFiles()
+      }
+      // 列表滚动至选中文件
+      let selectFileDom = document.getElementById(newFile)
+      let fileListDom = document.getElementById('file-list')
+      if (selectFileDom && fileListDom) {
+        fileListDom.scrollTop = selectFileDom.offsetTop - 12 - 30 // 保持上方有一个前方文件
+      }
     },
     changeIdx: function (d, event) {
       if (event) {
@@ -353,7 +369,6 @@ export default {
      * @param idx 点击文字的定位
      */
     pointWord: function (idx, config = {}) {
-      console.log(this.mode, idx, config)
       if (this.mode === 'select') {
         if (!this.nowType) {
           alert('请先选择标签')
@@ -749,7 +764,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.home {
+.home,
+.now-file {
   position: absolute;
   top: 0;
   left: 0;
@@ -761,6 +777,10 @@ export default {
   cursor: pointer;
   font-weight: 700;
   vertical-align: center;
+}
+.now-file {
+  left: unset;
+  right: 0;
 }
 .out-title {
   display: inline-block;
@@ -1032,10 +1052,16 @@ export default {
   .out-title {
     text-align: right !important;
   }
+  .now-file  {
+    display: none;
+  }
 }
 @media only screen and (max-width: 600px) {
   .out-title {
     font-size: 0;
+  }
+  .now-file  {
+    display: inline-block;
   }
 }
 @media only screen and (max-width: 800px) {
