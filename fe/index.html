@@ -33,5 +33,22 @@
         background: #cccccc00;
       }
     </style>
+    <script>
+      if (!localStorage.isOldUser) {
+        let isPhone = false
+        for (let name of ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"]) {
+          if (navigator.userAgent.indexOf(name) > -1) {
+            isPhone = true
+          }
+        }
+        console.log(isPhone?'手机用户':'电脑用户')
+        if (isPhone) {
+          alert('NER中,双击删除实体\n待标注文本需要txt格式的压缩包')
+        } else {
+          alert('NER中,鼠标右键删除实体\n待标注文本需要txt格式的压缩包')
+        }
+        localStorage.isOldUser = Date.now()
+      }
+    </script>
   </body>
 </html>
