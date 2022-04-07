@@ -43,7 +43,24 @@
             </span>
           </div>
         </div>
-        <div id="ner-box" class="ner-box" @mouseup="setMode('')" @mouseleave="setMode('');setFocus('')" @keydown="setTypeByFastKey" @mouseover="setFocus('ner-box')">
+        <div id="ner-box" class="ner-box" @mouseup="setMode('')" @touchend="setMode('')" @mouseleave="setMode('');setFocus('')" @keydown="setTypeByFastKey" @mouseover="setFocus('ner-box')">
+          <!-- <svg style=" position: absolute; z-index: 99999999; overflow: unset; pointer-events: none">
+          <template class="rect" v-for="(word, idx) in nowNers" >
+            <template v-for="(w, i) in word.name">
+              <line
+              v-if="i === 0 || ((word.start%columnWordCount)+i) % columnWordCount === 0"
+               :key="`${word}${w}${i}`"
+                :x1="`${((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`"
+                :y1="`${((word.start+i)/columnWordCount|0)*35 + (word.isSmall ? 0 : -2)}px`"
+                :x2="`${((Math.min(word.end-(word.start+i), columnWordCount, columnWordCount - (word.start+i)%columnWordCount))*20 - (word.isSmall && i === 0 ? 4 : 0)) + ((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`"
+                :y2="`${word.isSmall?18:22+((word.start+i)/columnWordCount|0)*35 + (word.isSmall ? 0 : -2)}px`"
+                style="stroke:rgb(255,0,0);stroke-width:2"
+              ></line>
+              </template>
+            </template>
+          </span>
+            <text x="201" y="10" fill="red">关系一</text>
+          </svg> -->
           <div class="word-rect-area">
             <span class="rect" v-for="(word, idx) in nowNers" :key="idx">
               <span v-for="(w, i) in word.name" :key="`${word}${w}${i}`">
@@ -77,7 +94,7 @@
             </span>
           </div>
           <div v-if="projectType === '命名实体识别'">
-            <span class="word" v-for="(word, idx) in nowText" :key="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @mousemove="pointWord(idx)"
+            <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
             >
               {{ word }}
             </span>
@@ -328,6 +345,7 @@ export default {
      * @param idx 点击文字的定位
      */
     pointWord: function (idx, config = {}) {
+      console.log(this.mode, idx, config)
       if (this.mode === 'select') {
         if (!this.nowType) {
           alert('请先选择标签')
@@ -340,6 +358,13 @@ export default {
         const name = this.nowText.substring(start, end)
         this.$set(this, 'nowNer', { name, type, start, end, isMove: !config.isDefaultClick })
         return idx
+      }
+    },
+    pointWordByTouch: function (event) {
+      let {pageX, pageY} = event.touches[0]
+      let dom = document.elementFromPoint(pageX, pageY)
+      if (dom && dom.id) {
+        this.pointWord(dom.id)
       }
     },
     /**
@@ -457,7 +482,19 @@ export default {
     },
     startSelect: function (idx, event) {
       if (this.projectType !== '命名实体识别') return
+      let isNeedDel = false
+      if (event.touches) {
+        // 手机双击删除
+        if (this.startSelectTouchTs && Date.now() - this.startSelectTouchTs < 300) {
+          isNeedDel = true
+        }
+        this.startSelectTouchTs = Date.now()
+      }
       if (event.which === 3) {
+        // 电脑右键删除
+        isNeedDel = true
+      }
+      if (isNeedDel) {
         event.preventDefault()
         // 右键删除对应的图标
         const ners = this.ners
@@ -494,6 +531,7 @@ export default {
       }
       const isRepeat = this.checkIsRepeat(this.nowNer)
       if (!isRepeat && this.nowNer.isMove) {
+        console.log(this.nowNer)
         delete this.nowNer.isMove
         this.ners.push(this.nowNer)
         this.$set(this, 'ners', this.ners.sort((a, b) => {
@@ -962,5 +1000,23 @@ export default {
   position: absolute;
   top: -9px;
   right: -9px;
+}
+@media only screen and (max-width: 800px) {
+  .out-title {
+    text-align: right !important;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .out-title {
+    font-size: 0;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .result-box {
+    display: none;
+  }
+  .left {
+    display: none;
+  }
 }
 </style>

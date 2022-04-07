@@ -1,4 +1,4 @@
-# dw-tool-ner
+# whale-anno
 
 > Datawhale's ner tool.
 

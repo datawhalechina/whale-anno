@@ -290,6 +290,7 @@ export default {
   display: flex;
   flex: 1 1;
   flex-direction: row;
+  margin: 0 10px;
   /* height: calc(100% - 92px); */
 }
 .button {
