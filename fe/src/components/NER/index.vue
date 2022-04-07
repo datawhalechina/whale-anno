@@ -118,7 +118,9 @@
             backgroundColor: types[ner.type] ? types[ner.type].color : `#fff`,
           }"
         >
-          <span class="result-name">{{ ner.name }}</span>
+          <span class="result-name">{{ ner.name }}
+            <svg t="1649340286830" class="result-name-del" @click="delIdx(ner.start)" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5736" width="17" height="17"><path d="M916.945455 251.345455H768V190.836364c0-48.872727-39.563636-90.763636-88.436364-90.763637h-302.545454c-48.872727 0-90.763636 39.563636-90.763637 90.763637v60.509091H137.309091c-16.290909 0-30.254545 13.963636-30.254546 30.254545 0 16.290909 13.963636 30.254545 30.254546 30.254545h777.309091c16.290909 0 30.254545-13.963636 30.254545-30.254545 0-16.290909-11.636364-30.254545-27.927272-30.254545zM346.763636 190.836364c0-16.290909 13.963636-30.254545 30.254546-30.254546h300.218182c16.290909 0 30.254545 13.963636 30.254545 30.254546v60.509091H346.763636V190.836364z m0 0M646.981818 730.763636V400.290909c0-16.290909-13.963636-30.254545-30.254545-30.254545-16.290909 0-30.254545 13.963636-30.254546 30.254545v328.145455c0 16.290909 13.963636 30.254545 30.254546 30.254545 16.290909 2.327273 30.254545-11.636364 30.254545-27.927273z m0 0M467.781818 730.763636V400.290909c0-16.290909-13.963636-30.254545-30.254545-30.254545-16.290909 0-30.254545 13.963636-30.254546 30.254545v328.145455c0 16.290909 13.963636 30.254545 30.254546 30.254545 16.290909 2.327273 30.254545-11.636364 30.254545-27.927273z m0 0" p-id="5737" fill="#d81e06"></path><path d="M795.927273 372.363636c-16.290909 0-30.254545 13.963636-30.254546 30.254546v449.163636c0 16.290909-13.963636 30.254545-30.254545 30.254546h-418.909091c-16.290909 0-30.254545-13.963636-30.254546-30.254546V400.290909c0-16.290909-13.963636-30.254545-30.254545-30.254545-16.290909 0-30.254545 13.963636-30.254545 30.254545v449.163636c0 48.872727 39.563636 90.763636 90.763636 90.763637h418.909091c48.872727 0 90.763636-39.563636 90.763636-90.763637V402.618182c0-16.290909-13.963636-30.254545-30.254545-30.254546z m0 0" p-id="5738" fill="#d81e06"></path></svg>
+          </span>
         </div>
       </div>
     </div>
@@ -253,6 +255,9 @@ export default {
     }
   },
   methods: {
+    log (...args) {
+      console.log(args)
+    },
     // 获取文件列表
     getFiles () {
       const that = this
@@ -484,6 +489,19 @@ export default {
       }
       this.$set(this, 'wordsOutType', this.wordsOutType)
     },
+    delIdx: function (idx) {
+      const ners = this.ners
+      for (let i = ners.length - 1; i >= 0; i -= 1) {
+        const ner = ners[i]
+        if (idx >= ner.start && idx < ner.end) {
+          ners.splice(i, 1)
+          this.$set(this, 'ners', ners)
+          this.flushWordsType()
+          this.save() // 删除时实时保存
+          return true
+        }
+      }
+    },
     startSelect: function (idx, event) {
       if (this.projectType !== '命名实体识别') return
       let isNeedDel = false
@@ -501,17 +519,7 @@ export default {
       if (isNeedDel) {
         event.preventDefault()
         // 右键删除对应的图标
-        const ners = this.ners
-        for (let i = ners.length - 1; i >= 0; i -= 1) {
-          const ner = ners[i]
-          if (idx >= ner.start && idx < ner.end) {
-            ners.splice(i, 1)
-            this.$set(this, 'ners', ners)
-            this.flushWordsType()
-            this.save() // 删除时实时保存
-            return true
-          }
-        }
+        this.delIdx(idx)
         return true
       }
       this.setMode('select')
@@ -948,6 +956,7 @@ export default {
   width: 120px;
 }
 .result {
+  position: relative;
   overflow: hidden;
   padding: 0 4px;
   height: 22px;
@@ -972,6 +981,20 @@ export default {
 }
 .result-name {
   width: calc(100% - 8px);
+}
+.result-name-del {
+  display: none;
+  vertical-align: text-bottom;
+  position: absolute;
+  right: 0px;
+  top: 2px;
+}
+.result-name-del:hover {
+  cursor: pointer;
+  opacity: .6;
+}
+.result-name:hover .result-name-del {
+  display: inline-block;
 }
 
 .word-rect-area {
