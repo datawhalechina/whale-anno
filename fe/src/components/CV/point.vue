@@ -2,9 +2,9 @@
   <div class="anno-img-box">
     <div class="point-box">
       <img class="anno-img" id="anno-img" @click="addPoint($event)" :src="`data:image/jpeg;base64,${fileContent}`" @dragstart="$event.preventDefault()" @contextmenu="$event.preventDefault()">
-      <div v-for="annoDetail in annoDetails" :point="annoDetail" :key="`${annoDetail.point[0]}_${annoDetail.point[1]}`" :style="{
-        left: annoDetail.point[0]*100 + '%',
-        top: annoDetail.point[1]*100 + '%',
+      <div v-for="annoDetail in annoDetails" :point="annoDetail" :key="`${annoDetail.points[0][0]}_${annoDetail.points[0][1]}`" :style="{
+        left: annoDetail.points[0][0]*100 + '%',
+        top: annoDetail.points[0][1]*100 + '%',
         backgroundColor: types[annoDetail.type]?types[annoDetail.type].color:'#f00',
       }" class="point" @contextmenu="$event.preventDefault();delPoint(annoDetail)" @mouseover="overPoint($event, annoDetail)"></div>
     </div>
@@ -60,11 +60,10 @@ export default ({
       }
       const tar = ev.target
       const newPoint = [ev.offsetX / tar.offsetWidth, ev.offsetY / tar.offsetHeight]
-      console.log(newPoint)
       // this.points.push(newPoint)
       // console.log(this.points)
       this.annoDetails.push({
-        point: newPoint,
+        points: [newPoint],
         type: this.nowType
       })
       this.save()
