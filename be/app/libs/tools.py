@@ -8,6 +8,7 @@ import tarfile
 from os import rename
 from os import listdir
 from shutil import move
+import base64
 
 
 def make_dir(path):
@@ -29,6 +30,20 @@ def read_json_file(json_file_name):
         data = json.load(f)
     return data
 
+# 自适配读取文件
+def read_file(file_path):
+    ext = file_path.split('.')[-1]
+    if ext in ['jpg', 'png']:
+        return read_img_file(file_path)
+    elif ext in ['txt']:
+        return read_txt_file(file_path)
+    return ''
+
+# 读取img文件
+def read_img_file(file_path):
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode("ascii")
 
 # 读取txt文件
 def read_txt_file(file_path):

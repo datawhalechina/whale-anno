@@ -106,6 +106,9 @@
               <br v-if="word === '\n'" :key="idx"/>
             </template>
           </div>
+          <div v-if="projectType === '图片点标注'">
+            <img :src="nowText" class="anno-img">
+          </div>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -336,6 +339,9 @@ export default {
             that.$set(that, 'ners', info.annoDetails)
             that.$set(that.nersCache, that.nowFile, [...that.ners])
             that.flushWordsType()
+          }
+          if (info.fileContent[0] !== 'd') {
+            info.fileContent = 'data:image/jpeg;base64,' + info.fileContent
           }
           // 更新文件的文本信息
           that.$set(that.textDic, newFile, info.fileContent)
@@ -1047,6 +1053,9 @@ export default {
   position: absolute;
   top: -9px;
   right: -9px;
+}
+.anno-img {
+  width: 100%;
 }
 @media only screen and (max-width: 800px) {
   .out-title {

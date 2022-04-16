@@ -7,7 +7,7 @@ import json
 import os
 import zipfile
 
-from ...libs.tools import read_txt_file, write_json, read_json_file, make_dir
+from ...libs.tools import read_file, write_json, read_json_file, make_dir
 
 api = RedPrint('anno')
 
@@ -59,7 +59,7 @@ def query_anno():
         file_name = request.args.get("fileName").strip()
 
         file_path = PROJECTS + '/' + project_name + '/' + file_name
-        file_content = read_txt_file(file_path)
+        file_content = read_file(file_path)
 
         anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
         output_anno = OutputAnno()

@@ -53,7 +53,7 @@ def get_zipped_data():
             folder_path = target_path + '/' + item
             if os.path.isdir(folder_path):
                 for file in os.listdir(folder_path):
-                    if file.split('.')[-1] == 'txt':
+                    if file.split('.')[-1] in ['txt', 'jpg', 'png']:
                         shutil.copy(folder_path + '/' + file, folder_path + '/../')
                         # Here  to deal with chinese encode in module zipfile and rarfile
                         if file_type == 'zip':

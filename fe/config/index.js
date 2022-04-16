@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/v1/': {
-        // target: 'http://localhost:9060/',
-        target: 'https://tekii.cn/',
+        target: 'http://localhost:9060/',
+        // target: 'https://tekii.cn/',
       }
     },
 
