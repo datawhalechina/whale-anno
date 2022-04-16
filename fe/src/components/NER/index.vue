@@ -97,7 +97,7 @@
             </div>
           </div>
           <div v-if="projectType === '命名实体识别'">
-            <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
+            <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @touchend="stopSelect()" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
             >
               {{ word }}
             </span>
@@ -532,13 +532,17 @@ export default {
     },
     startSelect: function (idx, event) {
       if (this.projectType !== '命名实体识别') return
+      let that = this
       let isNeedDel = false
       if (event.touches) {
-        // 手机双击删除
-        if (this.startSelectTouchTs && Date.now() - this.startSelectTouchTs < 300) {
-          isNeedDel = true
-        }
-        this.startSelectTouchTs = Date.now()
+        // 手机长按删除
+        setTimeout(() => {
+          if (window.delMarkIdx === idx) {
+            delete window.delMarkIdx
+            that.delIdx(idx)
+          }
+        }, 300)
+        window.delMarkIdx = idx
       }
       if (event.which === 3) {
         // 电脑右键删除
@@ -555,6 +559,9 @@ export default {
       this.startIdx = idx
       this.endIdx = idx
       this.pointWord(idx, {isDefaultClick: true})
+    },
+    stopSelect: function () {
+      delete window.delMarkIdx
     },
     checkIsRepeat: function (tarNer) {
       for (let i = 0; i < this.ners.length; i += 1) {
