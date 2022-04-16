@@ -50,7 +50,7 @@
             <template v-for="(w, i) in word.name">
               <line
               v-if="i === 0 || ((word.start%columnWordCount)+i) % columnWordCount === 0"
-               :key="`${word}${w}${i}`"
+              :key="`${word}${w}${i}`"
                 :x1="`${((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`"
                 :y1="`${((word.start+i)/columnWordCount|0)*35 + (word.isSmall ? 0 : -2)}px`"
                 :x2="`${((Math.min(word.end-(word.start+i), columnWordCount, columnWordCount - (word.start+i)%columnWordCount))*20 - (word.isSmall && i === 0 ? 4 : 0)) + ((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`"
@@ -62,37 +62,39 @@
           </span>
             <text x="201" y="10" fill="red">关系一</text>
           </svg> -->
-          <div class="word-rect-area">
-            <span class="rect" v-for="(word, idx) in nowNers" :key="idx">
-              <span v-for="(w, i) in word.name" :key="`${word}${w}${i}`">
-                <!-- <span class="ner-type"
-                  v-if="i===0"
-                  :style="{
-                    left: `${((word.start+i)%columnWordCount)*20}px`,
-                    top:  `${((word.start+i)/columnWordCount|0)*35 - 14}px`,
-                  }"
-                >{{word.type}}</span> -->
-                <span class="ner-anchor"
-                  v-if="i === 0 || ((word.start%columnWordCount)+i) % columnWordCount === 0"
-                  :style="{
-                  border: '1px solid #ccc',
-                  position: 'absolute',
-                  display: 'inline-block',
-                  left: `${((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`,
-                  top:  `${((word.start+i)/columnWordCount|0)*35 + (word.isSmall ? 0 : -2)}px`,
-                  width: `${(Math.min(word.end-(word.start+i), columnWordCount, columnWordCount - (word.start+i)%columnWordCount))*20 - (word.isSmall && i === 0 ? 4 : 0)}px`,
-                  height: `${word.isSmall?18:22}px`,
-                  background: `${types[word.type]?types[word.type]['color']:'000000'}`,
-                  lineHeight: '25px',
-                  borderTopLeftRadius: `${(i===0)?6:0}px`,
-                  borderBottomLeftRadius: `${(i===0)?6:0}px`,
-                  borderLeft: `${i===0?1:0} solid #ccc`,
-                  borderTopRightRadius: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length <= columnWordCount)?6:0}px`,
-                  borderBottomRightRadius: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length <= columnWordCount)?6:0}px`,
-                  borderRight: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length < columnWordCount)?1:0} solid #ccc`
-                }"></span>
+          <div v-if="projectType === '命名实体识别'">
+            <div class="word-rect-area">
+              <span class="rect" v-for="(word, idx) in nowNers" :key="idx">
+                <span v-for="(w, i) in word.name" :key="`${word}${w}${i}`">
+                  <!-- <span class="ner-type"
+                    v-if="i===0"
+                    :style="{
+                      left: `${((word.start+i)%columnWordCount)*20}px`,
+                      top:  `${((word.start+i)/columnWordCount|0)*35 - 14}px`,
+                    }"
+                  >{{word.type}}</span> -->
+                  <span class="ner-anchor"
+                    v-if="i === 0 || ((word.start%columnWordCount)+i) % columnWordCount === 0"
+                    :style="{
+                    border: '1px solid #ccc',
+                    position: 'absolute',
+                    display: 'inline-block',
+                    left: `${((word.start+i)%columnWordCount)*20 + (word.isSmall && i === 0 ? 2 : 0)}px`,
+                    top:  `${((word.start+i)/columnWordCount|0)*35 + (word.isSmall ? 0 : -2)}px`,
+                    width: `${(Math.min(word.end-(word.start+i), columnWordCount, columnWordCount - (word.start+i)%columnWordCount))*20 - (word.isSmall && i === 0 ? 4 : 0)}px`,
+                    height: `${word.isSmall?18:22}px`,
+                    background: `${types[word.type]?types[word.type]['color']:'000000'}`,
+                    lineHeight: '25px',
+                    borderTopLeftRadius: `${(i===0)?6:0}px`,
+                    borderBottomLeftRadius: `${(i===0)?6:0}px`,
+                    borderLeft: `${i===0?1:0} solid #ccc`,
+                    borderTopRightRadius: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length <= columnWordCount)?6:0}px`,
+                    borderBottomRightRadius: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length <= columnWordCount)?6:0}px`,
+                    borderRight: `${(i!==0 && word.name.length-i <= columnWordCount) || (i===0 && word.start%columnWordCount+word.name.length < columnWordCount)?1:0} solid #ccc`
+                  }"></span>
+                </span>
               </span>
-            </span>
+            </div>
           </div>
           <div v-if="projectType === '命名实体识别'">
             <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
@@ -106,9 +108,7 @@
               <br v-if="word === '\n'" :key="idx"/>
             </template>
           </div>
-          <div v-if="projectType === '图片点标注'">
-            <img :src="nowText" class="anno-img">
-          </div>
+          <CVPoint v-if="projectType === '图片点标注'" :src="nowText"></CVPoint>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -134,6 +134,7 @@
 <script>
 import { getColor } from '../../js/color.js'
 import { saveAsFile } from '../../js/utils.js'
+import CVPoint from '@/components/CV/point.vue'
 
 // 是否是单机版
 const isLocal = false
@@ -188,6 +189,9 @@ function updateType2Server (projectName, typeList, types) {
 
 export default {
   name: 'NER',
+  components: {
+    CVPoint
+  },
   data () {
     return {
       configCanCtlType: isLocal, // 是否支持实体类型的调整
@@ -339,9 +343,6 @@ export default {
             that.$set(that, 'ners', info.annoDetails)
             that.$set(that.nersCache, that.nowFile, [...that.ners])
             that.flushWordsType()
-          }
-          if (info.fileContent[0] !== 'd') {
-            info.fileContent = 'data:image/jpeg;base64,' + info.fileContent
           }
           // 更新文件的文本信息
           that.$set(that.textDic, newFile, info.fileContent)
@@ -1053,9 +1054,6 @@ export default {
   position: absolute;
   top: -9px;
   right: -9px;
-}
-.anno-img {
-  width: 100%;
 }
 @media only screen and (max-width: 800px) {
   .out-title {
