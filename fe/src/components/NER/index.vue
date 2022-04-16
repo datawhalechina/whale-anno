@@ -108,7 +108,7 @@
               <br v-if="word === '\n'" :key="idx"/>
             </template>
           </div>
-          <CVPoint v-if="projectType === '图片点标注'" :src="nowText"></CVPoint>
+          <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="'1234'" :save="save"></CVPoint>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -681,18 +681,20 @@ export default {
   },
   watch: {
     ners: function () {
-      // 给ner加上是否缩小的属性
-      let nowSmallAreaEnd
-      for (let i = 0; i < this.ners.length; i++) {
-        const ner = this.ners[i]
-        ner.isSmall = false
-        if (nowSmallAreaEnd) {
-          if (ner.start <= nowSmallAreaEnd) {
-            ner.isSmall = true
+      if (this.projectType === '命名实体识别') {
+        // 给ner加上是否缩小的属性
+        let nowSmallAreaEnd
+        for (let i = 0; i < this.ners.length; i++) {
+          const ner = this.ners[i]
+          delete ner.isSmall
+          if (nowSmallAreaEnd) {
+            if (ner.start <= nowSmallAreaEnd) {
+              ner.isSmall = true
+            }
           }
+          if (!nowSmallAreaEnd) nowSmallAreaEnd = ner.end - 1
+          nowSmallAreaEnd = Math.max(nowSmallAreaEnd, ner.end - 1)
         }
-        if (!nowSmallAreaEnd) nowSmallAreaEnd = ner.end - 1
-        nowSmallAreaEnd = Math.max(nowSmallAreaEnd, ner.end - 1)
       }
     }
   },
