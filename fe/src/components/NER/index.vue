@@ -108,7 +108,7 @@
               <br v-if="word === '\n'" :key="idx"/>
             </template>
           </div>
-          <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="'1234'" :save="save"></CVPoint>
+          <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVPoint>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -405,8 +405,7 @@ export default {
     setType: function (type, ev) {
       if (this.projectType === '命名实体识别') {
         this.$set(this, 'nowType', type)
-      }
-      if (this.projectType === '文本分类') {
+      } else if (this.projectType === '文本分类') {
         let typeIdx = -1
         this.ners.some((ner, idx) => {
           if (ner.type === type) {
@@ -421,6 +420,9 @@ export default {
         }
         this.$set(this, 'nowType', type)
         this.save()
+      } else {
+        console.log(type)
+        this.$set(this, 'nowType', type)
       }
     },
     delType: function (type, ev) {
@@ -671,11 +673,12 @@ export default {
     isTypeSelected (type) {
       if (this.projectType === '命名实体识别') {
         return this.nowType === type
-      }
-      if (this.projectType === '文本分类') {
+      } else if (this.projectType === '文本分类') {
         return this.ners.some((ner) => {
           return ner.type === type
         })
+      } else {
+        return this.nowType === type
       }
     }
   },
@@ -714,8 +717,8 @@ export default {
         return entityType.type
       })
       that.types = types
-      // 进入命名实体识别时默认选择第一个标签，防止弹出请选择标签的提示
-      if (that.typeList && that.typeList[0] && projectType === '命名实体识别') that.nowType = that.typeList[0]
+      // 除了分类，默认选择第一个标签，防止弹出请选择标签的提示
+      if (that.typeList && that.typeList[0] && projectType.indexOf('分类') === -1) that.nowType = that.typeList[0]
       that.getFiles()
     }
     function calcColumnWordCount () {

@@ -5,7 +5,7 @@
       <div v-for="annoDetail in annoDetails" :point="annoDetail" :key="`${annoDetail.point[0]}_${annoDetail.point[1]}`" :style="{
         left: annoDetail.point[0]*100 + '%',
         top: annoDetail.point[1]*100 + '%',
-        backgroundColor: annoDetail.point.color
+        backgroundColor: types[annoDetail.type]?types[annoDetail.type].color:'#f00',
       }" class="point" @contextmenu="$event.preventDefault();delPoint(annoDetail)" @mouseover="overPoint($event, annoDetail)"></div>
     </div>
   </div>
@@ -29,6 +29,11 @@ export default ({
     nowType: {
       type: String,
       default: '1234',
+      required: true
+    },
+    types: {
+      type: Object,
+      default: () => {},
       required: true
     },
     save: {
