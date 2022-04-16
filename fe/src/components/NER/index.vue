@@ -270,6 +270,9 @@ export default {
     getFiles () {
       const that = this
       get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
+        if (!info || info.length === 0) {
+          that.pageNumber -= 1
+        }
         let newFiles = info.map((item) => {
           if (typeof item === 'string') return item
           that.isAnnoDic[`${that.projectName}_${item.fileName}`] = item.isAnno
@@ -294,10 +297,7 @@ export default {
     },
     nextPage () {
       const that = this
-      // if (that.files.length === that.pageSize) {
-      that.pageNumber = that.pageNumber + 1
       that.getFiles()
-      // }
     },
     goHome: function () {
       this.$router.push({path: '/'})
