@@ -96,6 +96,15 @@ def get_lables():
         ret_info.errMsg = str(e)
     return json.dumps(download_json, default=lambda o: o.__dict__)
 
+@api.route('/get_anno_json', methods=['GET'])
+def get_anno_json():
+    project_name = request.args.get("projectName")
+    anno_json_path = DOWNLOAD_FILE_LOCATION.format(project_name).replace('result.json', 'anno.json')
+    print(anno_json_path)
+    response = make_response(send_from_directory(directory='', path=anno_json_path, as_attachment=True))
+    response.headers["Content-disposition"] = 'attachment; filename=result.json'
+
+    return response
 
 @api.route('/get_json', methods=['GET'])
 def get_json():

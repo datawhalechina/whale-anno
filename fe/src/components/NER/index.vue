@@ -624,11 +624,12 @@ export default {
         // 非单机版，就直接通过url下载
         if (this.projectType === '命名实体识别') {
           window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
-        }
-        if (this.projectType === '文本分类') {
+        } else if (this.projectType === '文本分类') {
           get(`/v1/files/get_labels?projectName=${this.projectName}`, (text) => {
             saveAsFile(JSON.stringify(JSON.parse(text)), 'labels.json')
           }, {isDirect: true})
+        } else {
+          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
         }
         return true
       }
