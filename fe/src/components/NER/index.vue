@@ -340,13 +340,19 @@ export default {
           delete window.isLoadingNowText
           // 如果本地没有缓存，就用线上的标注记录
           if (!hasCache && info.annoDetails) {
-            that.$set(that, 'ners', info.annoDetails)
-            that.$set(that.nersCache, that.nowFile, [...that.ners])
-            that.flushWordsType()
+            console.log(newFile, that.nowFile)
+            if (newFile === that.nowFile) {
+              that.$set(that, 'ners', info.annoDetails)
+              that.flushWordsType()
+            }
+            // 更新文件的标注缓存
+            that.$set(that.nersCache, newFile, info.annoDetails)
           }
-          // 更新文件的文本信息
+          // 更新文件的文本缓存
           that.$set(that.textDic, newFile, info.fileContent)
-          that.nowText = that.textDic[newFile]
+          if (newFile === that.nowFile) {
+            that.nowText = that.textDic[newFile]
+          }
         })
       }
       if (that.files.indexOf(newFile) >= (that.files.length - 1) - 2) {
