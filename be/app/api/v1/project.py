@@ -7,7 +7,7 @@ from ...libs.redprint import RedPrint
 from flask import request
 import json
 import os
-from ...libs.tools import make_dir, write_json, read_json_file, unzip_file
+from ...libs.tools import make_dir, write_json, read_json_file, unzip_file, get_cn_name
 from ...entities.entities import Project, ReturnInfo
 
 
@@ -57,8 +57,8 @@ def get_zipped_data():
                         shutil.copy(folder_path + '/' + file, folder_path + '/../')
                         # Here  to deal with chinese encode in module zipfile and rarfile
                         if file_type == 'zip':
-                            os.rename(folder_path + '/../' + file,
-                                      folder_path + '/../' + file.encode('cp437').decode('GBK'))
+                            os.replace(folder_path + '/../' + file,
+                                    folder_path + '/../' + get_cn_name(file))
                 shutil.rmtree(folder_path)
     except Exception as e:
         print(e)

@@ -10,6 +10,11 @@ from os import listdir
 from shutil import move
 import base64
 
+def get_cn_name(name):
+    try:
+        return name.encode('cp437').decode('GBK')
+    except:
+        return name
 
 def make_dir(path):
     folder = os.path.exists(path)
@@ -72,6 +77,8 @@ def unzip_file(zip_src, dst_dir):
         fz = zipfile.ZipFile(zip_src, "r")
         for file in fz.namelist():
             fz.extract(file, dst_dir)
+            # Here to deal with chinese encode in module zipfile and rarfile
+            os.replace(dst_dir + '/' + file, dst_dir + '/' + get_cn_name(file))
         return "unzip .zip file success"
     # elif rarfile.is_rarfile(zip_src):
     #     fr = rarfile.RarFile(zip_src, "r")
