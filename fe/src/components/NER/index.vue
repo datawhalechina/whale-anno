@@ -16,8 +16,8 @@
           <div class="process-bar" :style="{width: `${processRate*100}%`}"></div>
         </div>
         <div class="page-ctl">
-          <span class="page-ctl-last" :style="{opacity: pageNumber === 1 ? 0 : 1}" @click="lastPage">上页</span>
-          <span class="page-number" :style="{opacity: pageNumber === 1 && files.length < pageSize ? 0 : 1}">{{pageNumber}}</span>
+          <span class="page-ctl-last" :style="{opacity: pageNumber === 1 || isLoadingPage ? 0 : 1}" @click="lastPage">上页</span>
+          <span class="page-number" :style="{opacity: (pageNumber === 1 || isLoadingPage) && files.length < pageSize ? 0 : 1}">{{pageNumber}}</span>
           <span class="page-ctl-next" :style="{opacity: files.length < pageSize ? 0 : 1}" @click="nextPage">下页</span>
         </div>
         <div class="out-btn" @click="outAllNers">导出json结果</div>
@@ -197,6 +197,7 @@ export default {
       configCanCtlType: isLocal, // 是否支持实体类型的调整
       pageNumber: 1,
       pageSize: 20,
+      isLoadingPage: false,
       inputType: '',
       projectName: '', // 项目名称
       projectType: '', // 项目类型
@@ -269,7 +270,9 @@ export default {
     // 获取文件列表
     getFiles () {
       const that = this
+      that.isLoadingPage = true
       get(`/v1/files/query?projectName=${that.projectName}&pageNumber=${that.pageNumber}&pageSize=${that.pageSize}`, function (info) {
+        that.isLoadingPage = false
         if (!info || info.length === 0) {
           that.pageNumber -= 1
         }
