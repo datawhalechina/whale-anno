@@ -1004,6 +1004,7 @@ export default {
 }
 .result-box {
   width: 120px;
+  overflow: auto;
 }
 .result {
   position: relative;
