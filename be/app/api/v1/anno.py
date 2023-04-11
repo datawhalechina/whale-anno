@@ -11,6 +11,28 @@ from ...libs.tools import read_file, write_json, read_json_file, make_dir
 
 api = RedPrint('anno')
 
+waiting_list_dic = {}
+
+def create_anno_2_file(project_name, anno_cont, all_anno=None):
+
+    anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
+
+    # 判断路径是否存在
+    if not os.path.exists(anno_output_path):
+        write_json(anno_output_path, [anno_cont])
+    else:
+        output_anno = OutputAnno()
+        output_anno.all_anno = read_json_file(anno_output_path)
+        output_anno.add_anno(anno_cont)
+
+        write_json(anno_output_path, output_anno.all_anno)
+    
+    waiting_list_dic[project_name] = waiting_list_dic[project_name][1:]
+    if len(waiting_list_dic[project_name]) > 0:
+        create_anno_2_file(project_name, waiting_list_dic[project_name][0], all_anno)
+        return True
+    return True
+
 
 
 
@@ -29,19 +51,11 @@ def create_anno():
         anno_cont.annoDetails = anno_details
         anno_cont.isAnno = True
 
-        anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
-
-        # 判断路径是否存在
-        if not os.path.exists(anno_output_path):
-            write_json(anno_output_path, [anno_cont])
-            ret_info.errCode = 0
-        else:
-            output_anno = OutputAnno()
-            output_anno.all_anno = read_json_file(anno_output_path)
-            output_anno.add_anno(anno_cont)
-
-            write_json(anno_output_path, output_anno.all_anno)
-            ret_info.errCode = 0
+        if project_name not in waiting_list_dic:
+            waiting_list_dic[project_name] = []
+        waiting_list_dic[project_name].append(anno_cont)
+        if (len(waiting_list_dic[project_name]) == 1): # 自己位于第一个才处理，其他在第一个结束时处理
+            create_anno_2_file(project_name, waiting_list_dic[project_name][0])
 
     except Exception as e:
         print(e)

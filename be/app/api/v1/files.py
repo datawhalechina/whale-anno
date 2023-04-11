@@ -30,6 +30,8 @@ def query_file():
             file_names.remove('anno.json')
 
         anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
+        if not os.path.exists(anno_output_path):
+            open(anno_output_path, 'w', encoding='utf-8').write('[]').close()
 
         # 判断路径是否存在
         if not os.path.exists(anno_output_path):
@@ -116,7 +118,10 @@ def get_json():
         project_file_list = get_project_file(project_path)
         anno_data_set = set()
         download_json = []
-        anno_data = read_json_file(PROJECT_PATH.format(project_name) + '/anno.json')
+        anno_file_path = PROJECT_PATH.format(project_name) + '/anno.json'
+        if not os.path.exists(anno_file_path):
+            open(anno_file_path, 'w', encoding='utf-8').write('[]').close()
+        anno_data = read_json_file(anno_file_path)
         for item in anno_data:
             item_dict = {}
             item_dict['file'] = item['fileName']

@@ -22,9 +22,11 @@ def make_dir(path):
     if not folder:
         os.mkdir(path)
 
+json_cache_dic = {}
 
 # 将json数据写入.json文件
 def write_json(json_file_path, data):
+    json_cache_dic[json_file_path] = data
     with open(json_file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, default=lambda o: o.__dict__)
 
