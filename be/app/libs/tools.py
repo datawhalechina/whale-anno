@@ -22,13 +22,10 @@ def make_dir(path):
     if not folder:
         os.mkdir(path)
 
-json_cache_dic = {}
-
 # 将json数据写入.json文件
 def write_json(json_file_path, data):
-    json_cache_dic[json_file_path] = data
-    with open(json_file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, default=lambda o: o.__dict__)
+    with open(json_file_path, 'w', encoding='utf-8') as fh:
+        fh.write(json.dumps(data, ensure_ascii=False))
 
 
 # 加载json文件中的json数据
@@ -42,7 +39,7 @@ def read_file(file_path):
     ext = file_path.split('.')[-1]
     if ext in ['jpg', 'png']:
         return read_img_file(file_path)
-    elif ext in ['txt']:
+    elif ext in ['txt', 'json']:
         return read_txt_file(file_path)
     return ''
 

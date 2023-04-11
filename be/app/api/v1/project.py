@@ -79,9 +79,6 @@ def create_project():
 
         make_dir(PROJECT_PATH.format(project_name))
         write_json(PROJECT_CONFIG_PATH.format(project_name), param)
-        anno_path = ANNO_OUTPUT_PATH.format(project_name)
-        if not os.path.exists(anno_path):
-            write_json(anno_path, [])
 
         ret_info.errCode = 0
 
@@ -104,8 +101,6 @@ def update_entity_types():
         for entity_type in entity_types:
             new_entity_types.append(entity_type.get('type'))
 
-        anno_output_path = ANNO_OUTPUT_PATH.format(project_name)
-
         if os.path.exists(PROJECT_CONFIG_PATH.format(project_name)):  # False
             project_config_info = read_json_file(PROJECT_CONFIG_PATH.format(project_name))
             project = Project()
@@ -113,16 +108,6 @@ def update_entity_types():
             project.projectType = project_config_info.get(PROJECT_TYPE)
             project.entityTypes = entity_types
             print(project.entityTypes)
-
-            if os.path.exists(anno_output_path):
-                anno_details = read_json_file(anno_output_path)
-                for anno_info in anno_details:
-                    anno_detail = json.loads(anno_info.get('annoDetails'))
-                    for ind, anno in enumerate(anno_detail):
-                        entity_type = anno.get('type')
-                        if entity_type not in new_entity_types:
-                            anno_detail.pop(ind)
-                write_json(anno_output_path, anno_details)
 
             write_json(PROJECT_CONFIG_PATH.format(project_name), project)
             ret_info.errMsg = 'update ok'
