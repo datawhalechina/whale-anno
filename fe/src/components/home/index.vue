@@ -28,6 +28,7 @@
             <option value ="命名实体识别">命名实体识别</option>
             <option value ="文本分类">文本分类</option>
             <option value ="图片点标注">图片点标注</option>
+            <option value ="人类反馈强化学习">人类反馈强化学习</option>
           </select>
         </p>
         <div class="title">

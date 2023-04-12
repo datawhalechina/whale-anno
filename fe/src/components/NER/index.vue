@@ -109,6 +109,7 @@
             </template>
           </div>
           <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVPoint>
+          <RLHF v-if="projectType === '人类反馈强化学习'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></RLHF>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -135,6 +136,7 @@
 import { getColor } from '../../js/color.js'
 import { saveAsFile } from '../../js/utils.js'
 import CVPoint from '@/components/CV/point.vue'
+import RLHF from '@/components/NLP/rlhf.vue'
 
 // 是否是单机版
 const isLocal = false
@@ -190,7 +192,8 @@ function updateType2Server (projectName, typeList, types) {
 export default {
   name: 'NER',
   components: {
-    CVPoint
+    CVPoint,
+    RLHF
   },
   data () {
     return {
@@ -433,6 +436,13 @@ export default {
         }
         this.$set(this, 'nowType', type)
         this.save()
+      } else if (this.projectType === '人类反馈强化学习') {
+        console.log(this.nowText === type, type)
+        this.$set(this, 'nowType', type)
+        clearInterval(window.rlhf_inter)
+        window.rlhf_inter = setInterval(() => {
+          this.$set(this, 'nowType', '')
+        }, 200)
       } else {
         console.log(type)
         this.$set(this, 'nowType', type)
@@ -740,8 +750,8 @@ export default {
         return entityType.type
       })
       that.types = types
-      // 除了分类，默认选择第一个标签，防止弹出请选择标签的提示
-      if (that.typeList && that.typeList[0] && projectType.indexOf('分类') === -1) that.nowType = that.typeList[0]
+      // 除了分类、强化学习，默认选择第一个标签，防止弹出请选择标签的提示
+      if (that.typeList && that.typeList[0] && projectType.indexOf('分类') === -1 && projectType.indexOf('强化学习') === -1) that.nowType = that.typeList[0]
       that.getFiles()
     }
     function calcColumnWordCount () {
