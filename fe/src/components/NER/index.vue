@@ -968,9 +968,19 @@ export default {
   box-sizing: content-box;
   border: 2px solid #0000;
   text-align: center;
+  opacity: .2;
+}
+.type:hover {
+  opacity: .8;
+}
+@media screen and (max-width: 768px) {
+  /* 防止手机点击后持续的hover效果 */
+  .type:hover {
+    opacity: .2;
+  }
 }
 .type.selected {
-  border: 2px solid #000;
+  opacity: 1;
 }
 .result.selected {
   position: relative;
