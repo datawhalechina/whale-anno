@@ -412,6 +412,10 @@ export default {
      * @param 类型
      */
     setType: function (type, ev) {
+      if (!this.nowFile) {
+        // 如果没有选中文件，就不允许标注
+        return false
+      }
       if (this.projectType === '命名实体识别') {
         this.$set(this, 'nowType', type)
       } else if (this.projectType === '文本分类') {
@@ -639,11 +643,9 @@ export default {
       if (!isLocal) {
         // 非单机版，就直接通过url下载
         if (this.projectType === '命名实体识别') {
-          window.open(`/v1/files/get_json?projectName=${this.projectName}`, '_self')
+          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
         } else if (this.projectType === '文本分类') {
-          get(`/v1/files/get_labels?projectName=${this.projectName}`, (text) => {
-            saveAsFile(JSON.stringify(JSON.parse(text)), 'labels.json')
-          }, {isDirect: true})
+          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
         } else {
           window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
         }

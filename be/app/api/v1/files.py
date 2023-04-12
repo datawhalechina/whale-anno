@@ -10,6 +10,7 @@ from ...entities.entities import ReturnInfo, FileInfo
 from ...libs.tools import read_json_file, read_txt_file, write_json, get_project_file
 import threading
 import time
+from urllib.parse import urlencode
 
 #
 api = RedPrint('files')
@@ -96,9 +97,11 @@ def get_anno_json():
         if not fn.endswith('.json'):
             continue
         js.append(read_txt_file(anno_output_dir + '/' + fn))
-    anno_json_path = DOWNLOAD_FILE_LOCATION.format(project_name).replace('result.json', 'anno.json')
+    anno_json_path = DOWNLOAD_FILE_LOCATION.format(project_name)
     open('app/'+anno_json_path, 'w', encoding='utf-8').write('\n'.join(js))
     response = make_response(send_from_directory(directory='', path=anno_json_path, as_attachment=True))
-    response.headers["Content-disposition"] = 'attachment; filename=result.json'
+    filename = project_name + '_' + time.strftime('%Y%m%d_%H%M%S') + '.json'
+    filename_urlencode = urlencode({'filename': filename})
+    response.headers["Content-disposition"] = f'attachment; {filename_urlencode}'
 
     return response

@@ -17,7 +17,7 @@ PROJECT_PATH = PROJECTS + '/{}/'
 PROJECT_CONFIG_PATH = PROJECTS + '/' + "{}" + '/config.json'
 
 #下载标注结果所在的位置
-DOWNLOAD_FILE_LOCATION = 'projects/{}/result.json'
+DOWNLOAD_FILE_LOCATION = 'projects/{}/anno.json'
 
 # 标注信息存储路径
 ANNO_OUTPUT_PATH = PROJECTS + '/{}/anno/{}.json'
