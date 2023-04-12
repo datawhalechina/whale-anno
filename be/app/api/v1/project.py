@@ -76,8 +76,11 @@ def create_project():
         param = request.get_json()
         print(param)
         project_name = param.get(PROJECT_NAME)
+        project_path = PROJECT_PATH.format(project_name)
 
-        make_dir(PROJECT_PATH.format(project_name))
+        make_dir(project_path)
+        make_dir(project_path + '/data')
+        make_dir(project_path + '/anno')
         write_json(PROJECT_CONFIG_PATH.format(project_name), param)
 
         ret_info.errCode = 0
