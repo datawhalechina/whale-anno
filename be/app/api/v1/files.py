@@ -26,7 +26,9 @@ def query_file():
         project_path = PROJECT_PATH.format(project_name)
         if not os.path.exists(project_path):
             os.makedirs(project_path)
-        file_names = os.listdir(project_path)
+            os.makedirs(project_path + '/data')
+            os.makedirs(project_path + '/anno')
+        file_names = os.listdir(project_path + '/data')
         if 'config.json' in file_names:
             file_names.remove('config.json')
         if 'anno.json' in file_names:
@@ -85,7 +87,6 @@ def get_lables():
     return json.dumps(download_json, default=lambda o: o.__dict__)
 
 @api.route('/get_anno_json', methods=['GET'])
-@api.route('/get_json', methods=['GET'])
 def get_anno_json():
     project_name = request.args.get("projectName")
     anno_output_dir = ANNO_OUTPUT_PATH.format(project_name, '').replace('.json', '')

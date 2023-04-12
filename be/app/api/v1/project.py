@@ -39,7 +39,7 @@ def get_zipped_data():
 
         upload_file = request.files['file']
         file_path = os.path.join(PROJECT_PATH.format(project_name), upload_file.filename)
-        target_path = PROJECT_PATH.format(project_name)
+        target_path = PROJECT_PATH.format(project_name) + '/data'
         upload_file.save(file_path)
         file_type = file_path.split('.')[-1]
         # print("zipped data received: .{} form".format(file_type))

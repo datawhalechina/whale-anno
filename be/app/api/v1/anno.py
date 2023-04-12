@@ -37,7 +37,7 @@ def query_anno():
         project_name = request.args.get("projectName").strip()
         file_name = request.args.get("fileName").strip()
 
-        file_path = PROJECT_PATH.format(project_name) + '/' + file_name
+        file_path = PROJECT_PATH.format(project_name) + '/data/' + file_name
         file_content = read_file(file_path)
 
         anno_output_path = ANNO_OUTPUT_PATH.format(project_name, file_name)

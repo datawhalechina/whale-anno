@@ -13,7 +13,7 @@ FILE_NAME = 'fileName'
 PROJECTS = 'app/projects'
 
 # 项目路径
-PROJECT_PATH = PROJECTS + '/{}/data/'
+PROJECT_PATH = PROJECTS + '/{}/'
 PROJECT_CONFIG_PATH = PROJECTS + '/' + "{}" + '/config.json'
 
 #下载标注结果所在的位置

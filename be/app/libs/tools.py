@@ -20,7 +20,7 @@ def make_dir(path):
     folder = os.path.exists(path)
 
     if not folder:
-        os.mkdir(path)
+        os.makedirs(path)
 
 # 将json数据写入.json文件
 def write_json(json_file_path, data):
@@ -58,10 +58,8 @@ def read_txt_file(file_path):
 
 def get_project_file(project_path):
 
-    file_name = os.listdir(project_path)
-    file_name.remove('anno.json')
-    file_name.remove('config.json')
-    return file_name
+    file_names = os.listdir(project_path + '/data')
+    return file_names
 
 
 def unzip_file(zip_src, dst_dir):
