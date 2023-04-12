@@ -2,7 +2,7 @@
   <div class="layout">
     <span class="home" @click="goHome">whaleAnno</span>
     <span class="now-file">{{ nowFile }}</span>
-    <h1 class="out-title">{{projectName}}（{{projectType}}）</h1>
+    <h1 class="out-title"><span class="out-title-span">{{projectName}}（{{projectType}}）</span></h1>
     <div class="container" @dragover="stopPrev" @drop="setFiles($event)">
       <div class="left">
         <div class="file-list" id="file-list">
@@ -811,6 +811,10 @@ export default {
   font-weight: 700;
   vertical-align: center;
 }
+.home {
+  background: #1161ca;
+  z-index: 2;
+}
 .now-file {
   left: unset;
   right: 0;
@@ -826,6 +830,12 @@ export default {
   font-size: 28px;
   box-sizing: border-box;
   vertical-align: middle;
+}
+.out-title>.out-title-span {
+  position: relative;
+  padding: 0 4px;
+  display: inline-block;
+  background: #1161ca;
 }
 .layout {
   display: flex;
@@ -850,11 +860,13 @@ export default {
 }
 .left .file {
   margin: 12px 0;
+  padding: 0 4px;
   cursor: pointer;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 .left .file.checked {
   position: relative;
