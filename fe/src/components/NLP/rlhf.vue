@@ -1,6 +1,6 @@
 <template>
   <div class="rlhf-box">
-    <div v-for="(line, idx) in fileContent.split('\n')" :key="idx" class="line" @click="clickLine(idx)">
+    <div v-for="(line, idx) in fileContent.split('<whale_n>')" :key="idx" class="line" @click="clickLine(idx)">
       <template v-for="(word, idx) in line">
         <span class="word" v-if="word !== '\n'" :key="idx">{{ word }}</span>
         <br v-if="word === '\n'" :key="idx"/>

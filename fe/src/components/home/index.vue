@@ -53,7 +53,7 @@
         </div>
         <p>上传文本：</p>
         <p style="font-size:10px">（请选择包含文本文件的zip、tar文件）</p>
-        <input type="file" id="file-input" accept=".zip,.tar"/>
+        <input type="file" id="file-input" accept=".zip,.tar,.jsonl"/>
         <p class="edit-box-btn-area">
           <button class="button danger" @click="del" v-if="page==='edit'">删除</button>
           <button class="button" @click="submit">提交</button>
@@ -169,9 +169,16 @@ export default {
         const fileInputElement = document.getElementById('file-input')
         if (fileInputElement.files[0]) {
           let formData = new FormData()
+          let file = fileInputElement.files[0]
           formData.append('projectName', projectName)
-          formData.append('file', fileInputElement.files[0])
-          form('/v1/project/get_zipped_data', formData)
+          formData.append('file', file)
+          if (file.name.endsWith('.zip')) {
+            form('/v1/project/get_zipped_data', formData)
+          } else if (file.name.endsWith('.tar')) {
+            form('/v1/project/get_zipped_data', formData)
+          } else if (file.name.endsWith('.jsonl')) {
+            form('/v1/project/get_jsonl_data', formData)
+          }
         }
       })
     },

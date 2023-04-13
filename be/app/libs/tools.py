@@ -41,6 +41,8 @@ def read_file(file_path):
         return read_img_file(file_path)
     elif ext in ['txt', 'json']:
         return read_txt_file(file_path)
+    elif '.' not in file_path:
+        return read_txt_file(file_path)
     return ''
 
 # 读取img文件
