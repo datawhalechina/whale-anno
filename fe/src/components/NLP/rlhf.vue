@@ -98,6 +98,11 @@ export default ({
 .line:hover {
   background-color: #eee;
 }
+@media screen and (max-width: 768px) {
+  .line:hover {
+    background-color: #fff0;
+  }
+}
 .line>.rank {
   position: absolute;
   right: 4px;
