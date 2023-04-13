@@ -6,7 +6,7 @@
         left: annoDetail.points[0][0]*100 + '%',
         top: annoDetail.points[0][1]*100 + '%',
         backgroundColor: types[annoDetail.type]?types[annoDetail.type].color:'#f00',
-      }" class="point" @contextmenu="$event.preventDefault();delPoint(annoDetail)" @mouseover="overPoint($event, annoDetail)"></div>
+      }" class="point" @contextmenu="$event.preventDefault();delPoint(annoDetail, true)" @touchstart="$event.preventDefault();delPoint(annoDetail, false)" @mouseover="overPoint($event, annoDetail)"></div>
     </div>
   </div>
 </template>
@@ -69,7 +69,13 @@ export default ({
       this.save()
       return false
     },
-    delPoint (annoDetail) {
+    delPoint (annoDetail, isForce) {
+      if (!isForce) {
+        // 非强制删除，就判定下当前类型是否一致，不一致就不删除
+        if (this.nowType !== annoDetail.type) {
+          return
+        }
+      }
       const idx = this.annoDetails.indexOf(annoDetail)
       console.log(annoDetail, this.points)
       this.annoDetails.splice(idx, 1)
