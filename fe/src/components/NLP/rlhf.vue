@@ -93,7 +93,7 @@ export default ({
 .line {
   position: relative;
   border-bottom: 1px solid;
-  height: 36px;
+  min-height: 36px;
 }
 .line:hover {
   background-color: #eee;
