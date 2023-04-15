@@ -134,7 +134,6 @@
 
 <script>
 import { getColor } from '../../js/color.js'
-import { saveAsFile } from '../../js/utils.js'
 import CVPoint from '@/components/CV/point.vue'
 import RLHF from '@/components/NLP/rlhf.vue'
 
