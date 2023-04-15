@@ -1,10 +1,11 @@
 <template>
   <div class="rlhf-box">
     <div v-for="(line, idx) in fileContent.split('<whale_n>')" :key="idx" class="line" @click="clickLine(idx)">
-      <template v-for="(word, idx) in line">
+      <!-- <template v-for="(word, idx) in line">
         <span class="word" v-if="word !== '\n'" :key="idx">{{ word }}</span>
         <br v-if="word === '\n'" :key="idx"/>
-      </template>
+      </template> -->
+      <div class="textarea">{{line}}</div>
       <span class="rank" v-if="annoDetails.indexOf(String(idx+1)) !== -1">{{annoDetails.indexOf(String(idx+1)) + 1}}</span>
     </div>
   </div>
@@ -124,5 +125,8 @@ export default ({
   text-align: center;
   font-size: 16px;
   z-index: 4;
+}
+.textarea {
+  white-space: break-spaces;
 }
 </style>
