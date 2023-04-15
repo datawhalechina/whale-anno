@@ -302,6 +302,7 @@ export default {
     },
     nextPage () {
       const that = this
+      that.pageNumber = that.pageNumber + 1
       that.getFiles()
     },
     goHome: function () {
