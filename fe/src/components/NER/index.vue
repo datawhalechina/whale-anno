@@ -110,7 +110,7 @@
           </div>
           <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVPoint>
           <RLHF v-if="projectType === '人类反馈强化学习'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></RLHF>
-          <Rel v-if="projectType === '关系标注'" :relDetails="relDetails" :nowType="nowType" :save="save"></Rel>
+          <Rel v-if="projectType === '关系标注'" :relDetails="relDetails" :nowType="nowType" :types="types" :save="save"></Rel>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -568,6 +568,7 @@ export default {
     startSelect: function (idx, event) {
       if (this.nerProjectType.indexOf(this.projectType) === -1) return
       if (this.nowType.indexOf('关系-') > -1) {
+        if (event.which === 3) return
         if (typeof this.relStartIdx === 'number') {
           console.log(this.relStartIdx, idx)
           this.relDetails.push({
