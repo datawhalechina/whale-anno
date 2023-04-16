@@ -54,7 +54,6 @@ export default ({
       this.save()
     },
     calRelLines (val) {
-      console.log('21341234');
       if (!val) {
         val = this.relDetails
       }
