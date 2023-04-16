@@ -18,6 +18,8 @@ def index():
     ret_info = ReturnInfo()
     try:
         project_config_info = []
+        if not os.path.exists(PROJECTS):
+            os.makedirs(PROJECTS)
         project_list = os.listdir(PROJECTS)
         project_list.sort(key=lambda x: os.path.getctime(os.path.join(PROJECTS, x)), reverse=True)
         for project_name in project_list:
