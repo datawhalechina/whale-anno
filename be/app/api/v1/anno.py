@@ -41,13 +41,14 @@ def query_anno():
         file_content = read_file(file_path)
 
         anno_output_path = ANNO_OUTPUT_PATH.format(project_name, file_name)
-        anno_details = []
+        j = {}
         if os.path.exists(anno_output_path):
-            anno_details = json.loads(read_file(anno_output_path))['annoDetails']
+            j = json.loads(read_file(anno_output_path))
 
         query_anno = QueryAnno()
         query_anno.fileContent = file_content
-        query_anno.annoDetails = anno_details
+        query_anno.annoDetails = j.get('annoDetails', [])
+        query_anno.relDetails = j.get('relDetails', [])
         ret_info.info = query_anno
 
         ret_info.errCode = 0

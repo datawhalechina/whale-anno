@@ -349,8 +349,9 @@ export default {
       const hasCache = !!that.nersCache[newFile]
       that.$set(that, 'ners', that.nersCache[newFile] ? [...that.nersCache[newFile]] : [])
       that.flushWordsType()
-      if (that.nowText) {
+      if (that.nowText && that.projectType !== '关系标注') {
         delete window.isLoadingNowText
+        return
       } else {
         get(`/v1/anno/query?projectName=${that.projectName}&fileName=${newFile}`, function (info) {
           delete window.isLoadingNowText
@@ -363,6 +364,10 @@ export default {
             }
             // 更新文件的标注缓存
             that.$set(that.nersCache, newFile, info.annoDetails)
+          }
+          if (that.projectType === '关系标注' && newFile === that.nowFile) {
+            console.log('relDetails', info.relDetails)
+            that.$set(that, 'relDetails', info.relDetails || [])
           }
           // 更新文件的文本缓存
           that.$set(that.textDic, newFile, info.fileContent)
@@ -577,6 +582,7 @@ export default {
             type: this.nowType
           })
           this.$set(this, 'relStartIdx', undefined)
+          this.save()
         } else {
           this.$set(this, 'relStartIdx', idx)
         }

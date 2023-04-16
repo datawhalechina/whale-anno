@@ -15,6 +15,7 @@ class ReturnInfo:
 class QueryAnno:
     def __init__(self):
         self.annoDetails = []
+        self.relDetails = []
         self.fileContent = ''
         # self.isAnno = False
 
