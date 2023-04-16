@@ -53,7 +53,7 @@
         </div>
         <p>上传文本：</p>
         <p style="font-size:10px">（请选择包含文本文件的zip、tar文件）</p>
-        <input type="file" id="file-input" accept=".zip,.tar,.jsonl"/>
+        <input type="file" id="file-input" accept=".zip,.tar,.jsonl,.txt"/>
         <p class="edit-box-btn-area">
           <button class="button danger" @click="del" v-if="page==='edit'">删除</button>
           <button class="button" @click="submit">提交</button>
@@ -178,6 +178,8 @@ export default {
             form('/v1/project/get_zipped_data', formData)
           } else if (file.name.endsWith('.jsonl')) {
             form('/v1/project/get_jsonl_data', formData)
+          } else if (file.name.endsWith('.txt')) {
+            form('/v1/project/get_txt_data', formData)
           }
         }
       })

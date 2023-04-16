@@ -102,6 +102,37 @@ def get_jsonl_data():
 
     return json.dumps(ret_info, default=lambda o: o.__dict__)
 
+@api.route('/get_txt_data', methods=['POST'])
+def get_txt_data():
+    ret_info = ReturnInfo()
+    try:
+        project_name = request.form.get('projectName')
+
+        upload_file = request.files['file']
+        file_path = os.path.join(PROJECT_PATH.format(project_name), upload_file.filename)
+        file_name = upload_file.filename.replace('.txt', '')
+        target_path = PROJECT_PATH.format(project_name) + '/data'
+        upload_file.save(file_path)
+        
+        with open(file_path, 'r', encoding='utf-8') as fh:
+            l = fh.readline().strip()
+            idx = 0
+            while l:
+                idx += 1
+                _idx = ('000000'+str(idx))[-6:]
+                if len(str(idx)) > 6:
+                    _idx = str(idx)
+                open(f'{target_path}/{file_name}_{_idx}', 'w', encoding='utf-8').write(l)
+                l = fh.readline().strip()
+        os.remove(file_path)
+
+    except Exception as e:
+        print(e)
+        ret_info.errCode = 404
+        ret_info.errMsg = str(e)
+
+    return json.dumps(ret_info, default=lambda o: o.__dict__)
+
 
 @api.route('/create', methods=['POST'])
 def create_project():
