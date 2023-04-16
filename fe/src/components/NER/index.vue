@@ -62,7 +62,13 @@
           </span>
             <text x="201" y="10" fill="red">关系一</text>
           </svg> -->
-          <div v-if="projectType === '命名实体识别'">
+          <div v-if="nerProjectType.indexOf(projectType) > -1">
+            <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @touchend="stopSelect()" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
+            >
+              {{ word }}
+            </span>
+          </div>
+          <div v-if="nerProjectType.indexOf(projectType) > -1">
             <div class="word-rect-area">
               <span class="rect" v-for="(word, idx) in nowNers" :key="idx">
                 <span v-for="(w, i) in word.name" :key="`${word}${w}${i}`">
@@ -96,12 +102,6 @@
               </span>
             </div>
           </div>
-          <div v-if="projectType === '命名实体识别'">
-            <span class="word" v-for="(word, idx) in nowText" :key="idx" :id="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @touchstart="startSelect(idx, $event)" @touchend="stopSelect()" @mousemove="pointWord(idx)" @touchmove="pointWordByTouch($event)"
-            >
-              {{ word }}
-            </span>
-          </div>
           <div v-if="projectType === '文本分类'">
             <template v-for="(word, idx) in nowText">
               <span class="word" v-if="word !== '\n'" :key="idx" @contextmenu="stopPrev" @mousedown="startSelect(idx, $event)" @mousemove="pointWord(idx)">{{ word }}</span>
@@ -110,6 +110,7 @@
           </div>
           <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVPoint>
           <RLHF v-if="projectType === '人类反馈强化学习'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></RLHF>
+          <Rel v-if="projectType === '关系标注'" :relDetails="relDetails" :nowType="nowType" :save="save"></Rel>
         </div>
         <div class="page-btn-box">
           <button class="page-btn" @click="changeIdx(-1, $event)" @mouseover="setFocus('page-up')" @mouseleave="setFocus('')">上一个 {{ fastTypeKey['page-up'] ? `【${fastTypeKey['page-up']}】` : '' }}</button>
@@ -136,6 +137,7 @@
 import { getColor } from '../../js/color.js'
 import CVPoint from '@/components/CV/point.vue'
 import RLHF from '@/components/NLP/rlhf.vue'
+import Rel from '@/components/NLP/rel.vue'
 
 // 是否是单机版
 const isLocal = false
@@ -192,7 +194,8 @@ export default {
   name: 'NER',
   components: {
     CVPoint,
-    RLHF
+    RLHF,
+    Rel
   },
   data () {
     return {
@@ -236,7 +239,10 @@ export default {
       wordsOutType: [], // 文字对应是否放大
       nersCache: { // 各个文件已标注内容的缓存
       },
-      mode: '' // 如果鼠标在文字上按下了，就开始'select'模式，开始框选实体
+      mode: '', // 如果鼠标在文字上按下了，就开始'select'模式，开始框选实体
+      nerProjectType: ['命名实体识别', '关系标注'],
+      relStartIdx: '',
+      relDetails: []
     }
   },
   computed: {
@@ -319,11 +325,15 @@ export default {
       }
       const that = this
       // 保存当前标注
-      post('/v1/anno/create', {
+      let annoInfo = {
         projectName: that.projectName,
         fileName: that.nowFile,
         annoDetails: that.ners
-      })
+      }
+      if (that.projectType === '关系标注') {
+        annoInfo.relDetails = that.relDetails
+      }
+      post('/v1/anno/create', annoInfo)
       that.$set(that.nersCache, that.nowFile, [...that.ners])
       return true
     },
@@ -419,7 +429,7 @@ export default {
         // 如果没有选中文件，就不允许标注
         return false
       }
-      if (this.projectType === '命名实体识别') {
+      if (this.nerProjectType.indexOf(this.projectType) > -1) {
         this.$set(this, 'nowType', type)
       } else if (this.projectType === '文本分类') {
         let typeIdx = -1
@@ -536,16 +546,18 @@ export default {
       }
       this.$set(this, 'wordsOutType', this.wordsOutType)
     },
-    delIdx: function (idx) {
+    getNerIdxByIdx: function (idx) {
       const ners = this.ners
       for (let i = ners.length - 1; i >= 0; i -= 1) {
         const ner = ners[i]
         if (idx >= ner.start && idx < ner.end) {
-          this.del(i)
-          this.flushWordsType()
-          return true
+          return i
         }
       }
+    },
+    delIdx: function (idx) {
+      const nerIdx = this.getNerIdxByIdx(idx)
+      this.del(nerIdx)
     },
     del: function (idx) {
       const ners = this.ners
@@ -554,7 +566,21 @@ export default {
       this.save() // 删除时实时保存
     },
     startSelect: function (idx, event) {
-      if (this.projectType !== '命名实体识别') return
+      if (this.nerProjectType.indexOf(this.projectType) === -1) return
+      if (this.nowType.indexOf('关系-') > -1) {
+        if (typeof this.relStartIdx === 'number') {
+          console.log(this.relStartIdx, idx)
+          this.relDetails.push({
+            start: this.relStartIdx,
+            end: idx,
+            type: this.nowType
+          })
+          this.$set(this, 'relStartIdx', undefined)
+        } else {
+          this.$set(this, 'relStartIdx', idx)
+        }
+        return
+      }
       let that = this
       let isNeedDel = false
       if (event.touches) {
@@ -652,13 +678,7 @@ export default {
     outAllNers () {
       if (!isLocal) {
         // 非单机版，就直接通过url下载
-        if (this.projectType === '命名实体识别') {
-          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
-        } else if (this.projectType === '文本分类') {
-          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
-        } else {
-          window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
-        }
+        window.open(`/v1/files/get_anno_json?projectName=${this.projectName}`, '_self')
         return true
       }
       this.nersCache[this.nowFile] = this.ners
@@ -704,7 +724,7 @@ export default {
     },
     // 判断标签按钮是否需要被显示成按下
     isTypeSelected (type) {
-      if (this.projectType === '命名实体识别') {
+      if (this.nerProjectType.indexOf(this.projectType) > -1) {
         return this.nowType === type
       } else if (this.projectType === '文本分类') {
         return this.ners.some((ner) => {
@@ -717,7 +737,7 @@ export default {
   },
   watch: {
     ners: function () {
-      if (this.projectType === '命名实体识别') {
+      if (this.nerProjectType.indexOf(this.projectType) > -1) {
         // 给ner加上是否缩小的属性
         let nowSmallAreaEnd
         for (let i = 0; i < this.ners.length; i++) {
@@ -1097,7 +1117,6 @@ export default {
 
 .word-rect-area .rect {
   position: absolute;
-  pointer-events: none;
 }
 
 .color-input {
