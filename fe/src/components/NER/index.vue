@@ -25,6 +25,7 @@
       <div class="right">
         <div class="title">
           <span>选择标签：</span>
+          <button v-if="projectType === '图片点标注'" @click="autoAnno" class="auto-anno">自动标注</button>
           <div class="type-box">
             <span v-for="type in typeList" :key="type" @click="setType(type)" @contextmenu="delType(type, $event)" :class="isTypeSelected(type)?'type selected':'type'"
               :style="{
@@ -740,6 +741,48 @@ export default {
       } else {
         return this.nowType === type
       }
+    },
+    // 请求自动标注接口
+    autoAnno () {
+      const that = this
+      // 获取图片base64
+      const img = document.getElementById('anno-img')
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      // 获取图片原始大小
+      const width = img.naturalWidth
+      const height = img.naturalHeight
+      // 设置canvas的宽高
+      canvas.width = width
+      canvas.height = height
+      // 绘制图片
+      ctx.drawImage(img, 0, 0, width, height)
+      // 获取base64
+      const base64 = canvas.toDataURL('image/png')
+      // 去掉前缀
+      const base64Data = base64.replace(/^data:image\/\w+;base64,/, '')
+      // 请求接口
+      const url = 'http://127.0.0.1:5000/detect'
+      post(url, {
+        projectName: that.projectName,
+        'image': base64Data
+      }, (info) => {
+        // 添加标注
+        const _ners = []
+        for (let i = 0; i < info.rect_angles.length; i++) {
+          const point = info.rect_angles[i]
+          const width = info.width
+          const height = info.height
+          console.log(point)
+          _ners.push({
+            'type': that.nowType,
+            'points': [[point.x / width, point.y / height]]
+          })
+        }
+        that.ners = [..._ners]
+        // 保存标注
+        that.save()
+      })
     }
   },
   watch: {
@@ -964,6 +1007,29 @@ export default {
   flex: 1;
   flex-direction: column;
   user-select: none;
+}
+.auto-anno {
+  float: right;
+  margin-right: 10px;
+  cursor: pointer;
+  box-sizing: content-box;
+  border: 2px solid #03022c;
+  text-align: center;
+  display: inline-block;
+  padding: 0 4px;
+  min-width: 100px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 30px;
+  border-radius: 4px;
+  background: #03022c;
+  color: #fff;
+  font-weight: 500;
+  vertical-align: middle;
+  outline: none;
+}
+button:hover {
+  opacity: .7;
 }
 .type-box {
   display: inline;

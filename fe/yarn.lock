@@ -1856,10 +1856,10 @@ chownr@^1.0.1:
   resolved "https://registry.npm.taobao.org/chownr/download/chownr-1.1.4.tgz#6fc9d7b42d32a583596337666e7d08084da2cc6b"
   integrity sha1-b8nXtC0ypYNZYzdmbn0ICE2izGs=
 
-chromedriver@^2.27.2:
+chromedriver@^2.46.0:
   version "2.46.0"
-  resolved "https://registry.npm.taobao.org/chromedriver/download/chromedriver-2.46.0.tgz?cache=0&sync_timestamp=1614899323230&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchromedriver%2Fdownload%2Fchromedriver-2.46.0.tgz#3d78e7eb9bb65dd804fe327a6bf76fced12be053"
-  integrity sha1-PXjn65u2XdgE/jJ6a/dvztEr4FM=
+  resolved "https://registry.npmmirror.com/chromedriver/-/chromedriver-2.46.0.tgz#3d78e7eb9bb65dd804fe327a6bf76fced12be053"
+  integrity sha512-dLtKIJW3y/PuFrPmcw6Mb8Nh+HwSqgVrK1rWgTARXhHfWvV822X2VRkx2meU/tg2+YQL6/nNgT6n5qWwIDHbwg==
   dependencies:
     del "^3.0.0"
     extract-zip "^1.6.7"
