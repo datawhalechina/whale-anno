@@ -110,6 +110,7 @@
             </template>
           </div>
           <CVPoint v-if="projectType === '图片点标注'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVPoint>
+          <CVCls v-if="projectType === '图像分类'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></CVCls>
           <RLHF v-if="projectType === '人类反馈强化学习'" :fileContent="nowText" :annoDetails="ners" :nowType="nowType" :types="types" :save="save"></RLHF>
           <Rel v-if="projectType === '关系标注'" :relDetails="relDetails" :nowType="nowType" :types="types" :save="save"></Rel>
         </div>
@@ -137,6 +138,7 @@
 <script>
 import { getColor } from '../../js/color.js'
 import CVPoint from '@/components/CV/point.vue'
+import CVCls from '@/components/CV/cls.vue'
 import RLHF from '@/components/NLP/rlhf.vue'
 import Rel from '@/components/NLP/rel.vue'
 
@@ -195,6 +197,7 @@ export default {
   name: 'NER',
   components: {
     CVPoint,
+    CVCls,
     RLHF,
     Rel
   },
@@ -437,7 +440,7 @@ export default {
       }
       if (this.nerProjectType.indexOf(this.projectType) > -1) {
         this.$set(this, 'nowType', type)
-      } else if (this.projectType === '文本分类') {
+      } else if (['文本分类', '图像分类'].indexOf(this.projectType) > -1) {
         let typeIdx = -1
         this.ners.some((ner, idx) => {
           if (ner.type === type) {
@@ -734,7 +737,7 @@ export default {
     isTypeSelected (type) {
       if (this.nerProjectType.indexOf(this.projectType) > -1) {
         return this.nowType === type
-      } else if (this.projectType === '文本分类') {
+      } else if (['文本分类', '图像分类'].indexOf(this.projectType) > -1) {
         return this.ners.some((ner) => {
           return ner.type === type
         })
@@ -762,10 +765,12 @@ export default {
       // 去掉前缀
       const base64Data = base64.replace(/^data:image\/\w+;base64,/, '')
       // 请求接口
-      const url = 'http://127.0.0.1:5000/detect'
+      // const url = 'http://127.0.0.1:5000/detect'
+      const url = 'http://127.0.0.1:5000/cv_cls'
       post(url, {
         projectName: that.projectName,
-        'image': base64Data
+        'image': base64Data,
+        'types': ['小狗', '小猫']
       }, (info) => {
         // 添加标注
         const _ners = []
