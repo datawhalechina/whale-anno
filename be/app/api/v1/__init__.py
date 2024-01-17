@@ -1,5 +1,5 @@
 from flask import Blueprint
-from ...api.v1 import index, project, files, anno
+from ...api.v1 import index, project, files, anno, ai
 
 
 def create_blueprint_v1():
@@ -9,5 +9,6 @@ def create_blueprint_v1():
     project.api.register(bp_v1, url_prefix='/project')
     anno.api.register(bp_v1, url_prefix='/anno')
     files.api.register(bp_v1, url_prefix='/files')
+    ai.api.register(bp_v1, url_prefix='/ai')
 
     return bp_v1
