@@ -116,7 +116,7 @@ export default ({
   user-select: none;
 }
 .point-box {
-  width: 300px;
+  width: 400px;
   position: absolute;
   font-size: 0;
 }
