@@ -33,7 +33,7 @@ git clone https://github.com/datawhalechina/whale-anno.git
 
 ```shell
 # 下载后端依赖
-python3 -m pip install flask==2.0.0
+python3 -m pip install flask -U
 ```
 
 后端只依赖了flask这个第三方库
