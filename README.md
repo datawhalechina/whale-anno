@@ -55,6 +55,10 @@ python3 ./run.py
 
 打开上述地址，然后点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=2)查看使用教程。此外，我们还提供了一个用于临时标注少量数据的单机版本（目前仅支持Windows），点击[这里](https://github.com/datawhalechina/whale-anno/releases)去下载，点击[这里](https://www.bilibili.com/video/BV1v64y197iA?p=1)查看单机版使用教程
 
+### 示例数据
+
+图片、文本的示例数据，可以在[这里](https://www.modelscope.cn/datasets/maxmon/whale-anno-example/files)下载
+
 ## 开发团队
 
 |      职责      |                  名单                  |
