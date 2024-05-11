@@ -75,4 +75,4 @@ python3 ./run.py
 
 ## LICENSE
 
-`<img style="border-width:0" src="https://img.shields.io/badge/license-GPL--3.0-lightgrey" /><br />`本作品采用GNU General Public License v3.0进行许可。
+<img style="border-width:0" src="https://img.shields.io/badge/license-GPL--3.0-lightgrey" /><br />本作品采用GNU General Public License v3.0进行许可。
